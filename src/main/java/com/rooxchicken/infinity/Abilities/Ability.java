@@ -1,28 +1,28 @@
 package com.rooxchicken.infinity.Abilities;
 
+import java.util.ArrayList;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Listener;
 
 import com.rooxchicken.infinity.Infinity;
+import com.rooxchicken.infinity.Library;
 
 public abstract class Ability implements Listener
 {
     private Infinity plugin;
     public String name = "null";
-    private Player player;
     public int type = -1;
+    public ArrayList<String> nodes;
 
-    public int cooldown1 = -1;
-    public int cooldown2 = -1;
-    
-    public boolean deadly = false;
+    public Ability(Infinity _plugin) { plugin = _plugin; Bukkit.getServer().getPluginManager().registerEvents(this, plugin); }
 
-    public Ability(Infinity _plugin, Player _player) { plugin = _plugin; player = _player; Bukkit.getServer().getPluginManager().registerEvents(this, plugin);}
-
-    public void passive() {}
-    public void activateFirstAbility(int state) {}
-    public void activateSecondAbility(int state) {}
-
-    public void secondAbilityUnlock() {}
+    public void sendNodes(Player player)
+    {
+        for(String node : nodes)
+        {
+            Library.sendPlayerData(player, node);
+        }
+    }
 }

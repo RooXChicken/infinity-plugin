@@ -35,5 +35,9 @@ commands:
    skilltree:
       description: Opens the skill tree
       usage: /skilltree
+
+   hdn_unlock:
+      description: Attempts to unlock a node
+      usage: /hdn_unlock
       
 depend: [ ProtocolLib ]

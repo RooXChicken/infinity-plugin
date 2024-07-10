@@ -54,10 +54,13 @@ import org.bukkit.util.Vector;
 
 import com.google.common.base.Predicate;
 import com.rooxchicken.infinity.Abilities.Ability;
+import com.rooxchicken.infinity.Abilities.HealthClass;
+import com.rooxchicken.infinity.Abilities.SpeedClass;
 import com.rooxchicken.infinity.Commands.FirstAbility;
 import com.rooxchicken.infinity.Commands.ResetCooldown;
 import com.rooxchicken.infinity.Commands.SecondAbility;
 import com.rooxchicken.infinity.Commands.SkillTree;
+import com.rooxchicken.infinity.Commands.Unlock;
 import com.rooxchicken.infinity.Commands.VerifyMod;
 import com.rooxchicken.infinity.Tasks.Task;
 
@@ -69,6 +72,10 @@ public class Infinity extends JavaPlugin implements Listener
     public ArrayList<Player> hasMod;
 
     private List<String> blockedCommands = new ArrayList<>();
+
+    //public SpeedClass strength;
+    public SpeedClass speed;
+    public HealthClass health;
 
     @Override
     public void onEnable()
@@ -101,8 +108,14 @@ public class Infinity extends JavaPlugin implements Listener
 
         this.getCommand("hdn_verifymod").setExecutor(new VerifyMod(this));
 		blockedCommands.add("hdn_verifymod");
+
+        this.getCommand("hdn_unlock").setExecutor(new Unlock(this));
+		blockedCommands.add("hdn_unlock");
         
         this.getCommand("skilltree").setExecutor(new SkillTree(this));
+
+        speed = new SpeedClass(this);
+        health = new HealthClass(this);
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
         {
@@ -132,19 +145,6 @@ public class Infinity extends JavaPlugin implements Listener
 
         getLogger().info("Infinity (limited to 1987) (made by roo)");
     }
-
-    // //format: name_index_ability1 name_ability1 desc (tooltip)_ability2 name_ability2 desc (tooltip)_unlock-requirements
-    // private void sendAbilityDesc(Player player)
-    // {
-    //     sendPlayerData(player, "2_.");
-    //     sendPlayerData(player, "2_Varuna_0_Condiut Power_Typhoon (COOLDOWN: 30s)_Creates a large ring of light blue+particles that spikes entities into+the air, dealing damage.+(BUFFED IN WATER/RAIN)_WaterJet (COOLDOWN: 1m)_Shoots a large water beam that+pushes entities back and deals+large damage._Build a condiut (will be deleted after)");
-    //     sendPlayerData(player, "2_Agni_1_Fire Resistance_HeatSeek (COOLDOWN: 30s)_Releases a seeking shockwave that+scans the area for players, lighting+them on fire and giving them glowing.+Repeats until the scan is over._Cinder (COOLDOWN: 1m 30s)_Shoots a fire arrow that does+more damage the longer its held.+(BUFFED WHEN ON FIRE/IN NETHER)_Bring a ghast into the overworld");
-    //     sendPlayerData(player, "2_Enil_2_Haste 2_Jolt (COOLDOWN: 45s)_Shoot a beam of lighting that gives+the target mining fatigue 3 and+slowness 3._Polarity (COOLDOWN: 2m)_Begins to charge the player with+electricity whenever attacking an+entity. Shoots an electric shockwave+when enough damage is dealt._Strike a creeper with Jolt while it's thunderstorming");
-    //     sendPlayerData(player, "2_Boreas_3_Speed 2_Gust (COOLDOWN: 30s)_Launches the player backward,+acting as a dodge_Vortex (COOLDOWN: 1m)_Picks up players and entities in a+ball of wind that can be launched._Get these advancements: [Caves and Cliffs, Star Trader, Sniper Duel]");
-    //     sendPlayerData(player, "2_Ymir_4_Fast Ice Speed_Frostbite (COOLDOWN: 1m)_Creates an icy shield that+completely protects against the next+3 hits, and freezes whoever attacks+the shield._Permafrost (COOLDOWN: 2m)_Summons an ice dome that slowly+freezes everything inside._Bring a blaze to an ice biome and kill it");
-    //     sendPlayerData(player, "2_Dolus_5_Increased gravity_Retract (COOLDOWN: 45s)_Creates a gravitational pull that+brings all entities closer_Crush (COOLDOWN: 2m)_Creates a dome where players+cannot jump and entities are slowed_Survive at y=-67 or less for 1 minute");
-
-    // }
 
     @EventHandler
     private void unRegisterPlayer(PlayerQuitEvent e)
