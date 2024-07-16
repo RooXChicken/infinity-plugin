@@ -8,11 +8,11 @@ import org.bukkit.entity.Player;
 
 import com.rooxchicken.infinity.Infinity;
 import com.rooxchicken.infinity.Abilities.Ability;
-public class Unlock implements CommandExecutor
+public class NodeAction implements CommandExecutor
 {
     private Infinity plugin;
 
-    public Unlock(Infinity _plugin)
+    public NodeAction(Infinity _plugin)
     {
         plugin = _plugin;
     }
@@ -30,11 +30,25 @@ public class Unlock implements CommandExecutor
                 switch(Integer.parseInt(args[1]))
                 {
                     //case 0: plugin.strength.sendNodes(); break;
-                    case 1: plugin.speed.sendNodes(player); break;
-                    case 2: plugin.health.sendNodes(player); break;
+                    case 1: plugin.speed.sendNodes(player, true); break;
+                    case 2: plugin.health.sendNodes(player, true); break;
                     //case 3: plugin.luck.sendNodes(); break;
                     //case 4: plugin.stealth.sendNodes(); break;
                 }
+            break;
+            case 1:
+            break;
+
+            case 2:
+                switch(Integer.parseInt(args[1]))
+                {
+                    case 0: plugin.speed.nodes.get(1).action(player, Integer.parseInt(args[2])); break;
+                    case 1: plugin.speed.nodes.get(4).action(player, Integer.parseInt(args[2])); break;
+                    case 2: plugin.speed.nodes.get(5).action(player, Integer.parseInt(args[2])); break;
+                    case 3: plugin.speed.nodes.get(7).action(player, Integer.parseInt(args[2])); break;
+                    case 4: plugin.speed.nodes.get(10).action(player, Integer.parseInt(args[2])); break;
+                }
+                plugin.speed.sendNodes(player, false);
             break;
         }
 

@@ -59,14 +59,17 @@ import com.rooxchicken.infinity.Abilities.SpeedClass;
 import com.rooxchicken.infinity.Commands.FirstAbility;
 import com.rooxchicken.infinity.Commands.ResetCooldown;
 import com.rooxchicken.infinity.Commands.SecondAbility;
+import com.rooxchicken.infinity.Commands.SetPoints;
 import com.rooxchicken.infinity.Commands.SkillTree;
-import com.rooxchicken.infinity.Commands.Unlock;
+import com.rooxchicken.infinity.Commands.NodeAction;
 import com.rooxchicken.infinity.Commands.VerifyMod;
 import com.rooxchicken.infinity.Tasks.Task;
+import com.rooxchicken.infinity.Tasks.TickPlayers;
 
 public class Infinity extends JavaPlugin implements Listener
 {
     public static NamespacedKey skillTreeKey;
+    public static NamespacedKey pointsKey;
 
     public static ArrayList<Task> tasks;
     public ArrayList<Player> hasMod;
@@ -81,10 +84,12 @@ public class Infinity extends JavaPlugin implements Listener
     public void onEnable()
     {
         tasks = new ArrayList<Task>();
+        tasks.add(new TickPlayers(this));
+
         hasMod = new ArrayList<Player>();
-        //tasks.add(new CooldownTask(this));
 
         skillTreeKey = new NamespacedKey(this, "skillTree");
+        pointsKey = new NamespacedKey(this, "points");
 
         getServer().getPluginManager().registerEvents(this, this);
         
@@ -109,10 +114,12 @@ public class Infinity extends JavaPlugin implements Listener
         this.getCommand("hdn_verifymod").setExecutor(new VerifyMod(this));
 		blockedCommands.add("hdn_verifymod");
 
-        this.getCommand("hdn_unlock").setExecutor(new Unlock(this));
-		blockedCommands.add("hdn_unlock");
+        this.getCommand("hdn_action").setExecutor(new NodeAction(this));
+		blockedCommands.add("hdn_action");
         
         this.getCommand("skilltree").setExecutor(new SkillTree(this));
+        this.getCommand("setpoints").setExecutor(new SetPoints(this));
+        this.getCommand("resetcooldown").setExecutor(new ResetCooldown(this));
 
         speed = new SpeedClass(this);
         health = new HealthClass(this);

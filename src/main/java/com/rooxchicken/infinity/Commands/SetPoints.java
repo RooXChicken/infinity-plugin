@@ -4,14 +4,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import com.rooxchicken.infinity.Infinity;
-public class ResetCooldown implements CommandExecutor
+import com.rooxchicken.infinity.Library;
+public class SetPoints implements CommandExecutor
 {
     private Infinity plugin;
 
-    public ResetCooldown(Infinity _plugin)
+    public SetPoints(Infinity _plugin)
     {
         plugin = _plugin;
     }
@@ -22,8 +22,7 @@ public class ResetCooldown implements CommandExecutor
         if(!sender.isOp())
             return false;
 
-        Player player = Bukkit.getPlayer(sender.getName());
-        plugin.speed.resetCooldown(player);
+        Library.setPoints(Bukkit.getPlayer(sender.getName()), Integer.parseInt(args[0]));
 
         return true;
     }

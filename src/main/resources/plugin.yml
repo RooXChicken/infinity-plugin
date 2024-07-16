@@ -36,8 +36,16 @@ commands:
       description: Opens the skill tree
       usage: /skilltree
 
-   hdn_unlock:
-      description: Attempts to unlock a node
-      usage: /hdn_unlock
+   hdn_action:
+      description: Attempts to activate a node
+      usage: /hdn_action
+
+   setpoints:
+      description: Sets a player's points
+      usage: /setpoints <number>
+
+   resetcooldown:
+      description: Resets all cooldowns
+      usage: /resetcooldown
       
 depend: [ ProtocolLib ]
