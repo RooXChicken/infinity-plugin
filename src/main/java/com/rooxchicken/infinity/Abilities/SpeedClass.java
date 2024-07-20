@@ -11,9 +11,11 @@ import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -31,12 +33,19 @@ public class SpeedClass extends Ability
     private Infinity plugin;
     public int type = -1;
 
+    private NamespacedKey genericSpeedKey;
+    private NamespacedKey attackSpeedKey;
     private NamespacedKey node1AbilityKey;
+
     private NamespacedKey doubleJumpCooldownKey;
 
     private NamespacedKey node2AbilityKey;
     private NamespacedKey node3AbilityKey;
     private NamespacedKey node4AbilityKey;
+    private NamespacedKey node5AbilityKey;
+    private NamespacedKey node6AbilityKey;
+    private NamespacedKey node7AbilityKey;
+    private NamespacedKey node8AbilityKey;
 
     private ArrayList<Player> jumps;
 
@@ -49,25 +58,90 @@ public class SpeedClass extends Ability
 
         header = "2_srt_Speed_2_0.4_0.8_1.0_true_1.0";
 
-        nodes.add(new Node(_plugin, "n", "n", 0, 21, -1, false, null, null, null, null));
-        nodes.add(new Node(_plugin, "icons/28", "+10% generic speed", 0, 20, 0, true, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
-        nodes.add(new Node(_plugin, "n", "n", 0, -20, -1, false, null, null, null, null));
-        nodes.add(new Node(_plugin, "lArrow", "n", -20, -20, -1, false, null, null, null, null));
-        nodes.add(new Node(_plugin, "icons/1", "Double Jump (COOLDOWN: 30s)", -40, -20, 1, true, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
-        nodes.add(new Node(_plugin, "icons/20", "Speed 2 Effect", -80, -20, 2, true, this::node2Learn, this::node2Unlearn, this::node2Status, this::node4CanUnlearn));
-        nodes.add(new Node(_plugin, "n", "n", -60, -20, -1, false, null, null, null, null));
-        nodes.add(new Node(_plugin, "icons/41", "Dash (REPLACED DOUBLE JUMP)", -60, -60, 3, true, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
-        nodes.add(new Node(_plugin, "n", "n", -60, -20, -1, false, null, null, null, null));
-        nodes.add(new Node(_plugin, "rArrow", "n", 20, -20, -1, false, null, null, null, null));
-        nodes.add(new Node(_plugin, "icons/42", "Speed 1 Effect", 40, -20, 4, true, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
+        nodes.add(new Node(_plugin, "n", "n", 20, 41, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "icons/28", "+10% generic speed", 20, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
+        nodes.add(new Node(_plugin, "rArrow", "n", 40, 40, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 60, 40, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 20, 40, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "uArrow", "n", 20, 20, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 20, 10, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 20, 40, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "lArrow", "n", 0, 40, -1, false, false, null, null, null, null));
+
+        nodes.add(new Node(_plugin, "icons/1", "Double Jump (COOLDOWN: 30s)", -20, 40, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
+        nodes.add(new Node(_plugin, "lArrow", "n", -40, 40, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", -60, 40, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", -20, 40, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "uArrow", "n", -20, 20, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", -20, 10, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", -40, 10, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", -40, -10, -1, false, false, null, null, null, null));
+
+        nodes.add(new Node(_plugin, "n", "n", -20, 10, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 0, 10, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 0, -10, -1, false, false, null, null, null, null));
+
+        nodes.add(new Node(_plugin, "icons/20", "Speed 2 Effect", -60, 40, 2, true, true, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
+        nodes.add(new Node(_plugin, "icons/41", "Dash (REPLACED DOUBLE JUMP)", -40, -10, 3, true, true, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
+        
+        nodes.add(new Node(_plugin, "n", "n", 0, -9, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "icons/36", "Haste 2 Effect", 0, -10, 5, true, false, this::node5Learn, this::node5Unlearn, this::node5Status, this::node5CanUnlearn));
+        nodes.add(new Node(_plugin, "n", "n", 0, -25, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 10, -25, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 10, -35, -1, false, false, null, null, null, null));
+
+
+        //nodes.add(new Node(_plugin, "n", "n", 1, -10, -1, false, false, null, null, null, null));
+        
+        nodes.add(new Node(_plugin, "n", "n", 20, 4, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "icons/42", "Speed 1 Effect", 20, 5, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
+        nodes.add(new Node(_plugin, "n", "n", 20, -25, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 10, -25, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 10, -35, -1, false, false, null, null, null, null));
+
+        nodes.add(new Node(_plugin, "icons/19", "+5% generic speed +5% chance of slowness on hit", 10, -35, 8, true, false, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
+        
+        //nodes.add(new Node(_plugin, "n", "n", 0, -10, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 60, 39, -1, false, true, null, null, null, null));
+        
+        
+        nodes.add(new Node(_plugin, "icons/4", "+20% attack speed", 60, 40, 6, true, false, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
+        nodes.add(new Node(_plugin, "uArrow", "n", 60, 20, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "n", "n", 60, 5, -1, false, false, null, null, null, null));
+        nodes.add(new Node(_plugin, "line", "n", 35, 15, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "line", "n", 40, 20, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "line", "n", 45, 25, -1, false, true, null, null, null, null));
+        nodes.add(new Node(_plugin, "icons/39", "+5% attack speed +2% chance of lightning on hit", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
+        
     
         jumps = new ArrayList<Player>();
+
+        //nodes.get(6).locked = true;
+
+        genericSpeedKey = new NamespacedKey(_plugin, "genericSpeed");
+        attackSpeedKey = new NamespacedKey(_plugin, "attackSpeed");
 
         node1AbilityKey = new NamespacedKey(_plugin, "speed_1Ability");
         doubleJumpCooldownKey = new NamespacedKey(_plugin, "speed_DJCD");
         node2AbilityKey = new NamespacedKey(_plugin, "speed_2Ability");
         node3AbilityKey = new NamespacedKey(_plugin, "speed_3Ability");
         node4AbilityKey = new NamespacedKey(_plugin, "speed_4Ability");
+        node5AbilityKey = new NamespacedKey(_plugin, "speed_5Ability");
+        node6AbilityKey = new NamespacedKey(_plugin, "speed_6Ability");
+        node7AbilityKey = new NamespacedKey(_plugin, "speed_7Ability");
+        node8AbilityKey = new NamespacedKey(_plugin, "speed_8Ability");
+    }
+
+    public Node findNode(String icon)
+    {
+        for(int i = 0; i < nodes.size(); i++)
+        {
+            String name = nodes.get(i).icon;
+            if(name.length() > 6 && name.substring(6).equals(icon))
+                return nodes.get(i);
+        }
+
+        return null;
     }
 
     public void resetCooldown(Player player)
@@ -111,7 +185,7 @@ public class SpeedClass extends Ability
             }
             else
             {
-                launch.setPitch(-Math.abs(launch.getPitch()));
+                launch.setPitch(-70);
                 player.setVelocity(launch.getDirection());
                 player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().subtract(0,0.5,0), 175, 1, 0.1, 1, new Particle.DustOptions(Color.WHITE, 1f));
             
@@ -149,40 +223,81 @@ public class SpeedClass extends Ability
         if(data.has(node2AbilityKey, PersistentDataType.BOOLEAN) && data.get(node2AbilityKey, PersistentDataType.BOOLEAN))
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2, 1));
 
-        if(data.has(node1AbilityKey, PersistentDataType.BOOLEAN) && data.get(node1AbilityKey, PersistentDataType.BOOLEAN))
-        {
-            
-        }
-
         if(data.has(node4AbilityKey, PersistentDataType.BOOLEAN) && data.get(node4AbilityKey, PersistentDataType.BOOLEAN))
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2, 0));
 
+        if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 2, 1));
+
+        //player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1f * data.get(attackSpeedKey, null));
+
         return bar;
+    }
+
+    public void onHit(EntityDamageByEntityEvent event)
+    {
+        if(!(event.getDamager() instanceof Player) || !(event.getEntity() instanceof LivingEntity))
+            return;
+
+        Player player = (Player)event.getDamager();
+        LivingEntity entity = (LivingEntity)event.getEntity();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.02)
+        {
+            event.getEntity().getWorld().strikeLightning(event.getEntity().getLocation());
+            event.setDamage(event.getDamage() * 1.6);
+        }
+
+        if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.05)
+        {
+            entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
+        }
     }
 
     public void node0Learn(Player player) { player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.11f); }
     public void node0Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1f); }
     public void node0Status(Player player, Node node) { node.locked = false; }
-    public void node0CanUnlearn(Player player, Node node) { if(!nodes.get(4).aquired && !nodes.get(10).aquired) unlearnNode(player, node); }
+    public void node0CanUnlearn(Player player, Node node) { if(!findNode("1").aquired && !findNode("42").aquired && !findNode("4").aquired) unlearnNode(player, node); }
 
     public void node1Learn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, true); player.getPersistentDataContainer().set(doubleJumpCooldownKey, PersistentDataType.INTEGER, 0); }
     public void node1Unlearn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, false); player.setAllowFlight(false); }
-    public void node1Status(Player player, Node node) { if(nodes.get(1).aquired && !nodes.get(10).aquired) node.locked = false; else node.locked = true; }
-    public void node1CanUnlearn(Player player, Node node) { if(!nodes.get(5).aquired && !nodes.get(7).aquired) unlearnNode(player, node); }
+    public void node1Status(Player player, Node node) { if(!findNode("4").aquired && !findNode("42").aquired && findNode("28").aquired) node.locked = false; else node.locked = true; }
+    public void node1CanUnlearn(Player player, Node node) { if(!findNode("41").aquired && !findNode("36").aquired && !findNode("20").aquired) unlearnNode(player, node); }
 
     public void node2Learn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node2Unlearn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, false); }
-    public void node2Status(Player player, Node node) { if(nodes.get(4).aquired) node.locked = false; else node.locked = true; }
+    public void node2Status(Player player, Node node) { if(findNode("1").aquired && !findNode("36").aquired && !findNode("41").aquired) node.locked = false; else node.locked = true; }
     public void node2CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
     public void node3Learn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node3Unlearn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, false); }
-    public void node3Status(Player player, Node node) { if(nodes.get(4).aquired) node.locked = false; else node.locked = true; }
+    public void node3Status(Player player, Node node) { if(findNode("1").aquired && !findNode("20").aquired) node.locked = false; else node.locked = true; }
     public void node3CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
     public void node4Learn(Player player) { player.getPersistentDataContainer().set(node4AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node4Unlearn(Player player) { player.getPersistentDataContainer().set(node4AbilityKey, PersistentDataType.BOOLEAN, false); }
-    public void node4Status(Player player, Node node) { if(nodes.get(1).aquired && !nodes.get(4).aquired) node.locked = false; else node.locked = true; }
-    public void node4CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node4Status(Player player, Node node) { if(!findNode("39").aquired && !findNode("1").aquired && findNode("28").aquired) node.locked = false; else node.locked = true; }
+    public void node4CanUnlearn(Player player, Node node) { if(!findNode("19").aquired) unlearnNode(player, node); }
+
+    public void node5Learn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node5Unlearn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node5Status(Player player, Node node) { if(findNode("1").aquired && !findNode("20").aquired) node.locked = false; else node.locked = true; }
+    public void node5CanUnlearn(Player player, Node node) { if(!findNode("19").aquired) unlearnNode(player, node); }
+
+    public void node6Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.8f); }
+    public void node6Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4f); }
+    public void node6Status(Player player, Node node) { if(findNode("28").aquired && !findNode("1").aquired) node.locked = false; else node.locked = true; }
+    public void node6CanUnlearn(Player player, Node node) { if(!findNode("39").aquired) unlearnNode(player, node); }
+
+    public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(5.04f); }
+    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.8f); }
+    public void node7Status(Player player, Node node) { if(!findNode("42").aquired && findNode("4").aquired) node.locked = false; else node.locked = true; }
+    public void node7CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+
+    public void node8Learn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, true); player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 1.05f); }
+    public void node8Unlearn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue() * 0.95f); }
+    public void node8Status(Player player, Node node) { if(findNode("36").aquired || findNode("42").aquired) node.locked = false; else node.locked = true; }
+    public void node8CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
 }

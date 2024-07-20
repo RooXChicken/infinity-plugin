@@ -25,6 +25,7 @@ public class Node
     public boolean drawTexture;
     public boolean aquired;
     public boolean locked;
+    public boolean skip;
 
     public NamespacedKey key;
     public Consumer<Player> learn;
@@ -32,7 +33,7 @@ public class Node
     public BiConsumer<Player, Node> status;
     public BiConsumer<Player, Node> canUnlearn;
 
-    public Node(Infinity _plugin, String _icon, String _description, int _x, int _y, int _clickIndex, boolean _drawTexture, Consumer<Player> _learn, Consumer<Player> _unlearn, BiConsumer<Player, Node> _status, BiConsumer<Player, Node> _canUnlearn)
+    public Node(Infinity _plugin, String _icon, String _description, int _x, int _y, int _clickIndex, boolean _drawTexture, boolean _skip, Consumer<Player> _learn, Consumer<Player> _unlearn, BiConsumer<Player, Node> _status, BiConsumer<Player, Node> _canUnlearn)
     {        
         icon = _icon;
         description = _description;
@@ -42,6 +43,7 @@ public class Node
         clickIndex = _clickIndex;
 
         drawTexture = _drawTexture;
+        skip = _skip;
         aquired = false;
 
         locked = false;
@@ -69,7 +71,7 @@ public class Node
                 status.accept(player, this);
         }
 
-        return "2_" + icon + "_" + x + "_" + y + "_" + description + "_" + drawTexture + "_" + aquired + "_" + locked + "_" + clickIndex;
+        return "2_" + icon + "_" + x + "_" + y + "_" + description + "_" + drawTexture + "_" + skip + "_" + aquired + "_" + locked + "_" + clickIndex;
     }
 
     public void action(Player player, int mouse)

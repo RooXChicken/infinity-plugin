@@ -23,11 +23,11 @@ public class SkillTree implements CommandExecutor
     {
         Player player = Bukkit.getPlayer(sender.getName());
         Library.sendPlayerData(player, "2_srt_Menu_0_1.0_1.0_1.0_false_3.0");
-        Library.sendPlayerData(player, "2_menu/strength_-42_0_Strength Class_true_false_false_0");
-        Library.sendPlayerData(player, "2_menu/speed_-21_0_Speed Class_true_false_false_1");
-        Library.sendPlayerData(player, "2_menu/health_0_0_Health Class_true_false_false_2");
-        Library.sendPlayerData(player, "2_menu/luck_21_0_Luck Class_true_false_false_3");
-        Library.sendPlayerData(player, "2_menu/stealth_42_0_Stealth Class_true_false_false_4");
+        Library.sendPlayerData(player, "2_menu/strength_-42_0_Strength Class_true_true_false_false_0");
+        Library.sendPlayerData(player, "2_menu/speed_-21_0_Speed Class_true_true_false_false_1");
+        Library.sendPlayerData(player, "2_menu/health_0_0_Health Class_true_true_false_false_2");
+        Library.sendPlayerData(player, "2_menu/luck_21_0_Luck Class_true_true_false_false_3");
+        Library.sendPlayerData(player, "2_menu/stealth_42_0_Stealth Class_true_true_false_false_4");
         Library.sendPlayerData(player, "3_" + Library.getPoints(player) + "_true");
         
         return true;
