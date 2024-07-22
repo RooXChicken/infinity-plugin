@@ -56,6 +56,7 @@ import com.google.common.base.Predicate;
 import com.rooxchicken.infinity.Abilities.Ability;
 import com.rooxchicken.infinity.Abilities.HealthClass;
 import com.rooxchicken.infinity.Abilities.SpeedClass;
+import com.rooxchicken.infinity.Abilities.StrengthClass;
 import com.rooxchicken.infinity.Commands.FirstAbility;
 import com.rooxchicken.infinity.Commands.ResetCooldown;
 import com.rooxchicken.infinity.Commands.SecondAbility;
@@ -76,7 +77,7 @@ public class Infinity extends JavaPlugin implements Listener
 
     private List<String> blockedCommands = new ArrayList<>();
 
-    //public SpeedClass strength;
+    public StrengthClass strength;
     public SpeedClass speed;
     public HealthClass health;
 
@@ -121,6 +122,7 @@ public class Infinity extends JavaPlugin implements Listener
         this.getCommand("setpoints").setExecutor(new SetPoints(this));
         this.getCommand("resetcooldown").setExecutor(new ResetCooldown(this));
 
+        strength = new StrengthClass(this);
         speed = new SpeedClass(this);
         health = new HealthClass(this);
 

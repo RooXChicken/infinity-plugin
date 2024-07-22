@@ -17,6 +17,7 @@ import com.rooxchicken.infinity.Library;
 public class Node
 {
     Infinity plugin;
+    public String abilityClass;
     public String icon;
     public String description;
 
@@ -35,9 +36,10 @@ public class Node
     public BiConsumer<Player, Node> status;
     public BiConsumer<Player, Node> canUnlearn;
 
-    public Node(Infinity _plugin, String _icon, String _description, int _x, int _y, int _clickIndex, boolean _drawTexture, boolean _skip, Consumer<Player> _learn, Consumer<Player> _unlearn, BiConsumer<Player, Node> _status, BiConsumer<Player, Node> _canUnlearn)
+    public Node(Infinity _plugin, String _abilityClass, String _icon, String _description, int _x, int _y, int _clickIndex, boolean _drawTexture, boolean _skip, Consumer<Player> _learn, Consumer<Player> _unlearn, BiConsumer<Player, Node> _status, BiConsumer<Player, Node> _canUnlearn)
     {
         plugin = _plugin;
+        abilityClass = _abilityClass;
         icon = _icon;
         description = _description;
         
@@ -57,7 +59,7 @@ public class Node
         canUnlearn = _canUnlearn;
         
         if(clickIndex != -1)
-            key = new NamespacedKey(_plugin, "speed_" + clickIndex);
+            key = new NamespacedKey(_plugin, abilityClass + "_" + clickIndex);
     }
 
     public void checkStatus(Player player)
@@ -112,6 +114,6 @@ public class Node
 
     public Node cloneNode()
     {
-        return new Node(plugin, icon, description, x, y, clickIndex, drawTexture, skip, learn, unlearn, status, canUnlearn);
+        return new Node(plugin, abilityClass, icon, description, x, y, clickIndex, drawTexture, skip, learn, unlearn, status, canUnlearn);
     }
 }

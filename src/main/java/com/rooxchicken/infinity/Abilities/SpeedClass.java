@@ -57,57 +57,57 @@ public class SpeedClass extends Ability
         name = "Speed";
         header = "2_srt_Speed_2_0.4_0.8_1.0_true_1.0";
 
-        nodeList.add(new Node(_plugin, "n", "n", 20, 41, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "icons/28", "+10% generic speed", 20, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
-        nodeList.add(new Node(_plugin, "rArrow", "n", 40, 40, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 60, 40, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 20, 40, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "uArrow", "n", 20, 20, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 20, 10, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 20, 40, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "lArrow", "n", 0, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 41, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "icons/28", "+10% generic speed", 20, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "rArrow", "n", 40, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 40, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "uArrow", "n", 20, 20, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 40, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "lArrow", "n", 0, 40, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "icons/1", "Double Jump (COOLDOWN: 30s)", -20, 40, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
-        nodeList.add(new Node(_plugin, "lArrow", "n", -40, 40, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", -60, 40, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", -20, 40, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "uArrow", "n", -20, 20, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", -20, 10, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", -40, 10, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", -40, -10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "icons/1", "Double Jump (COOLDOWN: 30s)", -20, 40, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "lArrow", "n", -40, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", -60, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", -20, 40, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "uArrow", "n", -20, 20, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", -20, 10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", -40, 10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", -40, -10, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "n", "n", -20, 10, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 0, 10, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 0, -10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", -20, 10, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 0, 10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 0, -10, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "icons/20", "Speed 2 Effect", -60, 40, 2, true, true, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
-        nodeList.add(new Node(_plugin, "icons/41", "Dash (REPLACED DOUBLE JUMP)", -40, -10, 3, true, true, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/20", "Speed 2 Effect", -60, 40, 2, true, true, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/41", "Dash (REPLACED DOUBLE JUMP)", -40, -10, 3, true, true, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
         
-        nodeList.add(new Node(_plugin, "n", "n", 0, -9, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "icons/36", "Haste 2 Effect", 0, -10, 5, true, false, this::node5Learn, this::node5Unlearn, this::node5Status, this::node5CanUnlearn));
-        nodeList.add(new Node(_plugin, "n", "n", 0, -25, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 10, -25, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 10, -35, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 0, -9, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "icons/36", "Haste 2 Effect", 0, -10, 5, true, false, this::node5Learn, this::node5Unlearn, this::node5Status, this::node5CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 0, -25, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 10, -25, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 10, -35, -1, false, false, null, null, null, null));
         
-        nodeList.add(new Node(_plugin, "n", "n", 20, 4, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "icons/42", "Speed 1 Effect", 20, 5, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
-        nodeList.add(new Node(_plugin, "n", "n", 20, -25, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 10, -25, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 10, -35, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 4, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "icons/42", "Speed 1 Effect", 20, 5, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 20, -25, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 10, -25, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 10, -35, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "icons/19", "+5% generic speed +10% chance of slowness on hit", 10, -35, 8, true, false, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/19", "+5% generic speed +10% chance of slowness on hit", 10, -35, 8, true, false, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
         
-        //nodeList.add(new Node(_plugin, "n", "n", 0, -10, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 60, 39, -1, false, true, null, null, null, null));
+        //nodeList.add(new Node(_plugin, "speed", "n", "n", 0, -10, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 39, -1, false, true, null, null, null, null));
         
         
-        nodeList.add(new Node(_plugin, "icons/4", "+10% attack speed", 60, 40, 6, true, false, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
-        nodeList.add(new Node(_plugin, "uArrow", "n", 60, 20, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "n", "n", 60, 5, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "line", "n", 35, 15, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "line", "n", 40, 20, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "line", "n", 45, 25, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "icons/39", "+5% attack speed +8% chance of lightning on hit", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/4", "+10% attack speed", 60, 40, 6, true, false, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "uArrow", "n", 60, 20, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 5, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "line", "n", 35, 15, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "line", "n", 40, 20, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "line", "n", 45, 25, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "icons/39", "+5% attack speed +8% chance of lightning on hit", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
         
         jumps = new ArrayList<Player>();
 
@@ -128,7 +128,6 @@ public class SpeedClass extends Ability
             String name = "icons/" + icon;
             if(playerNodeMap.get(player).get(i).icon.equals(name))
             {
-                Bukkit.getLogger().info("Found icon of: " + icon + " with aquired status: " + playerNodeMap.get(player).get(i).aquired);
                 return playerNodeMap.get(player).get(i);
             }
         }
