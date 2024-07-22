@@ -1,6 +1,7 @@
 package com.rooxchicken.infinity.Abilities;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
@@ -20,17 +21,29 @@ public abstract class Ability implements Listener
     public int type = -1;
 
     public String header;
-    public ArrayList<Node> nodes;
+    public HashMap<Player, ArrayList<Node>> playerNodeMap;
+    public ArrayList<Node> nodeList;
 
     public Ability(Infinity _plugin) { plugin = _plugin; Bukkit.getServer().getPluginManager().registerEvents(this, plugin); }
 
     public void sendNodes(Player player, boolean resetZoom)
     {
+        if(playerNodeMap.containsKey(player))
+            playerNodeMap.remove(player);
+        
+        ArrayList<Node> nodes = new ArrayList<Node>();
+        for(Node node : nodeList)
+            nodes.add(node.cloneNode());
+
+        playerNodeMap.put(player, nodes);
+        for(Node node : playerNodeMap.get(player))
+            node.checkStatus(player);
+
         Library.sendPlayerData(player, header);
-        for(Node node : nodes)
-        {
+
+        for(Node node : playerNodeMap.get(player))
             Library.sendPlayerData(player, node.sendNode(player));
-        }
+
         Library.sendPlayerData(player, "3_" + Library.getPoints(player) + "_" + resetZoom);
     }
 

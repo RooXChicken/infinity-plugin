@@ -20,7 +20,7 @@ public class HealthClass extends Ability implements Listener
 
 
         name = "Health";
-        nodes = new ArrayList<Node>();
+        //nodes = new ArrayList<Node>();
 
         header = "2_srt_Health_2_0.96_0.38_0.32_true_1.0";
         // nodes.add("2_n_0_21_n_false_false_-1");

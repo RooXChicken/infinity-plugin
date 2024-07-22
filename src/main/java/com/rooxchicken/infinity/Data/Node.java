@@ -4,6 +4,7 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -15,6 +16,7 @@ import com.rooxchicken.infinity.Library;
 
 public class Node
 {
+    Infinity plugin;
     public String icon;
     public String description;
 
@@ -34,7 +36,8 @@ public class Node
     public BiConsumer<Player, Node> canUnlearn;
 
     public Node(Infinity _plugin, String _icon, String _description, int _x, int _y, int _clickIndex, boolean _drawTexture, boolean _skip, Consumer<Player> _learn, Consumer<Player> _unlearn, BiConsumer<Player, Node> _status, BiConsumer<Player, Node> _canUnlearn)
-    {        
+    {
+        plugin = _plugin;
         icon = _icon;
         description = _description;
         
@@ -57,7 +60,7 @@ public class Node
             key = new NamespacedKey(_plugin, "speed_" + clickIndex);
     }
 
-    public String sendNode(Player player)
+    public void checkStatus(Player player)
     {
         if(key != null)
         {
@@ -66,10 +69,15 @@ public class Node
                 data.set(key, PersistentDataType.BOOLEAN, false);
 
             aquired = data.get(key, PersistentDataType.BOOLEAN);
-
-            if(status != null)
-                status.accept(player, this);
         }
+
+        if(status != null)
+            status.accept(player, this);
+    }
+
+    public String sendNode(Player player)
+    {
+        checkStatus(player);
 
         return "2_" + icon + "_" + x + "_" + y + "_" + description + "_" + drawTexture + "_" + skip + "_" + aquired + "_" + locked + "_" + clickIndex;
     }
@@ -100,5 +108,10 @@ public class Node
                 canUnlearn.accept(player, this);
             }
         }
+    }
+
+    public Node cloneNode()
+    {
+        return new Node(plugin, icon, description, x, y, clickIndex, drawTexture, skip, learn, unlearn, status, canUnlearn);
     }
 }
