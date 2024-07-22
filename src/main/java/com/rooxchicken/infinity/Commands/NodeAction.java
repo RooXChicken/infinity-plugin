@@ -40,15 +40,15 @@ public class NodeAction implements CommandExecutor
                 switch(Integer.parseInt(args[1]))
                 {
                     case 0: plugin.strength.findNode(player, "12").action(player, Integer.parseInt(args[2])); break;
-                    // case 1: plugin.strength.findNode(player, "1").action(player, Integer.parseInt(args[2])); break;
-                    // case 2: plugin.strength.findNode(player, "20").action(player, Integer.parseInt(args[2])); break;
-                    // case 3: plugin.strength.findNode(player, "41").action(player, Integer.parseInt(args[2])); break;
-                    // case 4: plugin.strength.findNode(player, "42").action(player, Integer.parseInt(args[2])); break;
-                    // case 5: plugin.strength.findNode(player, "36").action(player, Integer.parseInt(args[2])); break;
-                    // case 6: plugin.strength.findNode(player, "4").action(player, Integer.parseInt(args[2])); break;
-                    // case 7: plugin.strength.findNode(player, "39").action(player, Integer.parseInt(args[2])); break;
-                    // case 8: plugin.strength.findNode(player, "19").action(player, Integer.parseInt(args[2])); break;
-                    // case 9: plugin.strength.findNode(player, "19").action(player, Integer.parseInt(args[2])); break;
+                    case 1: plugin.strength.findNode(player, "11").action(player, Integer.parseInt(args[2])); break;
+                    case 2: plugin.strength.findNode(player, "30").action(player, Integer.parseInt(args[2])); break;
+                    case 3: plugin.strength.findNode(player, "27").action(player, Integer.parseInt(args[2])); break;
+                    case 4: plugin.strength.findNode(player, "44").action(player, Integer.parseInt(args[2])); break;
+                    case 5: plugin.strength.findNode(player, "14").action(player, Integer.parseInt(args[2])); break;
+                    case 6: plugin.strength.findNode(player, "16").action(player, Integer.parseInt(args[2])); break;
+                    case 7: plugin.strength.findNode(player, "22").action(player, Integer.parseInt(args[2])); break;
+                    case 8: plugin.strength.findNode(player, "7").action(player, Integer.parseInt(args[2])); break;
+                    case 9: plugin.strength.findNode(player, "26").action(player, Integer.parseInt(args[2])); break;
                 }
                 plugin.strength.sendNodes(player, false);
             break;

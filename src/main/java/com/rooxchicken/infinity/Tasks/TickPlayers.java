@@ -28,6 +28,7 @@ public class TickPlayers extends Task
         {
             String bar = "";
             bar += plugin.speed.tickAbilities(player);
+            bar += plugin.strength.tickAbilities(player);
 
             if(!bar.equals(""))
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar));

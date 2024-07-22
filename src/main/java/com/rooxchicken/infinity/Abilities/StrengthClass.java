@@ -19,7 +19,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.Damageable;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
@@ -34,16 +40,16 @@ public class StrengthClass extends Ability
     private Infinity plugin;
     public int type = -1;
 
+    private NamespacedKey ability2CountKey;
+    
     private NamespacedKey node1AbilityKey;
-
-    private NamespacedKey doubleJumpCooldownKey;
-
     private NamespacedKey node2AbilityKey;
     private NamespacedKey node3AbilityKey;
-    private NamespacedKey node4AbilityKey;
     private NamespacedKey node5AbilityKey;
+    private NamespacedKey node6AbilityKey;
     private NamespacedKey node7AbilityKey;
     private NamespacedKey node8AbilityKey;
+    private NamespacedKey node9AbilityKey;
 
     private ArrayList<Player> jumps;
 
@@ -92,14 +98,17 @@ public class StrengthClass extends Ability
 
         nodeList.add(new Node(_plugin, "strength", "icons/7", "Right click a compass to track a specified player (COOLDOWN: 30m)", 75, 40, 8, true, true, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "icons/26", "The lower your health, the more damage you deal (CAP: 2x damage at 1hp)", 40, 5, 9, true, true, this::node9Learn, this::node9Unlearn, this::node9Status, this::node9CanUnlearn));
-        // node1AbilityKey = new NamespacedKey(_plugin, "speed_1Ability");
-        // doubleJumpCooldownKey = new NamespacedKey(_plugin, "speed_DJCD");
-        // node2AbilityKey = new NamespacedKey(_plugin, "speed_2Ability");
-        // node3AbilityKey = new NamespacedKey(_plugin, "speed_3Ability");
-        // node4AbilityKey = new NamespacedKey(_plugin, "speed_4Ability");
-        // node5AbilityKey = new NamespacedKey(_plugin, "speed_5Ability");
-        // node7AbilityKey = new NamespacedKey(_plugin, "speed_7Ability");
-        // node8AbilityKey = new NamespacedKey(_plugin, "speed_8Ability");
+        
+        ability2CountKey = new NamespacedKey(_plugin, "strength_critCount");
+
+        node1AbilityKey = new NamespacedKey(_plugin, "strength_1Ability");
+        node2AbilityKey = new NamespacedKey(_plugin, "strength_2Ability");
+        node3AbilityKey = new NamespacedKey(_plugin, "strength_3Ability");
+        node5AbilityKey = new NamespacedKey(_plugin, "strength_5Ability");
+        node6AbilityKey = new NamespacedKey(_plugin, "strength_6Ability");
+        node7AbilityKey = new NamespacedKey(_plugin, "strength_7Ability");
+        node8AbilityKey = new NamespacedKey(_plugin, "strength_8Ability");
+        node9AbilityKey = new NamespacedKey(_plugin, "strength_9Ability");
     }
 
     public Node findNode(Player player, String icon)
@@ -116,15 +125,47 @@ public class StrengthClass extends Ability
         return null;
     }
 
+    public Node findNode(Player player, int clickIndex)
+    {
+        for(int i = 0; i < playerNodeMap.get(player).size(); i++)
+        {
+            if(playerNodeMap.get(player).get(i).clickIndex == clickIndex)
+                return playerNodeMap.get(player).get(i);
+        }
+
+        return null;
+    }
+
     public void resetCooldown(Player player)
     {
-        player.getPersistentDataContainer().set(doubleJumpCooldownKey, PersistentDataType.INTEGER, 0);
+        //player.getPersistentDataContainer().set(doubleJumpCooldownKey, PersistentDataType.INTEGER, 0);
     }
 
     public String tickAbilities(Player player)
     {
         String bar = "";
         PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node1AbilityKey, PersistentDataType.BOOLEAN) && data.get(node1AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
+            {
+                player.removePotionEffect(PotionEffectType.WEAKNESS);
+                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GREEN, 1.0f));
+                player.getWorld().playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 1.0f);
+            }
+        }
+
+        if(data.has(node6AbilityKey, PersistentDataType.BOOLEAN) && data.get(node6AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(6.5);
+            else
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2.0);
+        }
+
+        if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2, 0));
 
         return bar;
     }
@@ -139,66 +180,129 @@ public class StrengthClass extends Ability
         LivingEntity entity = (LivingEntity)event.getEntity();
         PersistentDataContainer data = player.getPersistentDataContainer();
 
-        // if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.08)
-        // {
-        //     event.getEntity().getWorld().strikeLightning(event.getEntity().getLocation());
-        //     event.setDamage(event.getDamage() * 1.6);
-        // }
+        if(player.getVelocity().getY() < -0.09 && data.has(node2AbilityKey, PersistentDataType.BOOLEAN) && data.get(node2AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(!data.has(ability2CountKey, PersistentDataType.INTEGER))
+                data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
 
-        // if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.1)
-        // {
-        //     entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
-        // }
+            int crits = data.get(ability2CountKey, PersistentDataType.INTEGER) + 1;
+            if(crits > 7)
+            {
+                event.setDamage(event.getDamage() * 1.5);
+
+                entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.7f);
+                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.WHITE, 0.8f));
+
+                data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
+            }
+            else
+                data.set(ability2CountKey, PersistentDataType.INTEGER, crits);
+        }
+
+        if(data.has(node9AbilityKey, PersistentDataType.BOOLEAN) && data.get(node9AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(player.getHealth() < 16)
+            {
+                double multiplier = Math.min(2, 2 - (player.getHealth()/16 - 1.0/32));
+                Bukkit.getLogger().info(multiplier + "");
+                event.setDamage(event.getDamage() * multiplier);
+            }
+        }
+
+        if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.1)
+        {
+            if(entity instanceof Player)
+            {
+                Player victim = (Player)entity;
+                PlayerInventory inv = victim.getInventory();
+
+                ItemStack helmet = inv.getHelmet();
+                ItemStack chest = inv.getChestplate();
+                ItemStack legs = inv.getLeggings();
+                ItemStack boots = inv.getBoots();
+
+                if(helmet != null)
+                {
+                    Damageable helMeta = (Damageable)helmet.getItemMeta();
+                    helMeta.setDamage(helMeta.getDamage() + (int)(event.getFinalDamage() * 4));
+                    helmet.setItemMeta(helMeta);
+                }
+
+                if(chest != null)
+                {
+                    Damageable chestMeta = (Damageable)chest.getItemMeta();
+                    chestMeta.setDamage(chestMeta.getDamage() + (int)(event.getFinalDamage() * 4));
+                    chest.setItemMeta(chestMeta);
+                }
+
+                if(legs != null)
+                {
+                    Damageable legsMeta = (Damageable)legs.getItemMeta();
+                    legsMeta.setDamage(legsMeta.getDamage() + (int)(event.getFinalDamage() * 4));
+                    legs.setItemMeta(legsMeta);
+                }
+
+                if(boots != null)
+                {
+                    Damageable bootsMeta = (Damageable)boots.getItemMeta();
+                    bootsMeta.setDamage(bootsMeta.getDamage() + (int)(event.getFinalDamage() * 4));
+                    boots.setItemMeta(bootsMeta);
+                }
+
+                victim.getWorld().playSound(victim.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.4f, 1.0f);
+                victim.getWorld().spawnParticle(Particle.REDSTONE, victim.getLocation().clone().add(0,1,0), 100, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
+            }
+        }
     }
 
-    public void node0Learn(Player player) { }
-    public void node0Unlearn(Player player) { }
+    public void node0Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5); }
+    public void node0Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.0); }
     public void node0Status(Player player, Node node) { node.locked = false; }
-    public void node0CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node0CanUnlearn(Player player, Node node) { if(!findNode(player, 1).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) unlearnNode(player, node); }
 
-    public void node1Learn(Player player) { }
-    public void node1Unlearn(Player player) { }
-    public void node1Status(Player player, Node node) { node.locked = false; }
-    public void node1CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node1Learn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node1Unlearn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node1Status(Player player, Node node) { if(findNode(player, 0).aquired) node.locked = false; else node.locked = true; }
+    public void node1CanUnlearn(Player player, Node node) { if(!findNode(player, 2).aquired) unlearnNode(player, node); }
 
-    public void node2Learn(Player player) { }
-    public void node2Unlearn(Player player) { }
-    public void node2Status(Player player, Node node) { node.locked = false; }
-    public void node2CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node2Learn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node2Unlearn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node2Status(Player player, Node node) { if(findNode(player, 1).aquired) node.locked = false; else node.locked = true; }
+    public void node2CanUnlearn(Player player, Node node) { if(!findNode(player, 3).aquired) unlearnNode(player, node); }
     
-    public void node3Learn(Player player) { }
-    public void node3Unlearn(Player player) { }
-    public void node3Status(Player player, Node node) { node.locked = false; }
+    public void node3Learn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node3Unlearn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node3Status(Player player, Node node) { if(findNode(player, 2).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) node.locked = false; else node.locked = true; }
     public void node3CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
-    public void node4Learn(Player player) { }
-    public void node4Unlearn(Player player) { }
-    public void node4Status(Player player, Node node) { node.locked = false; }
-    public void node4CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node4Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2.0); }
+    public void node4Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5); }
+    public void node4Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 7).aquired && !findNode(player, 3).aquired) node.locked = false; else node.locked = true; }
+    public void node4CanUnlearn(Player player, Node node) { if(!findNode(player, 5).aquired && !findNode(player, 6).aquired) unlearnNode(player, node); }
 
-    public void node5Learn(Player player) { }
-    public void node5Unlearn(Player player) { }
-    public void node5Status(Player player, Node node) { node.locked = false; }
+    public void node5Learn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node5Unlearn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2.0); }
+    public void node5Status(Player player, Node node) { if(findNode(player,4).aquired && !findNode(player, 6).aquired) node.locked = false; else node.locked = true; }
     public void node5CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
-    public void node6Learn(Player player) { }
-    public void node6Unlearn(Player player) { }
-    public void node6Status(Player player, Node node) { node.locked = false; }
+    public void node6Learn(Player player) { player.getPersistentDataContainer().set(node6AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node6Unlearn(Player player) { player.getPersistentDataContainer().set(node6AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node6Status(Player player, Node node) { if(findNode(player, 4).aquired && !findNode(player, 5).aquired) node.locked = false; else node.locked = true; }
     public void node6CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
-    public void node7Learn(Player player) { }
-    public void node7Unlearn(Player player) { }
-    public void node7Status(Player player, Node node) { node.locked = false; }
-    public void node7CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node7Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 4).aquired && !findNode(player, 3).aquired) node.locked = false; else node.locked = true; }
+    public void node7CanUnlearn(Player player, Node node) { if(!findNode(player, 8).aquired && !findNode(player, 9).aquired)unlearnNode(player, node); }
 
-    public void node8Learn(Player player) { }
-    public void node8Unlearn(Player player) { }
-    public void node8Status(Player player, Node node) { node.locked = false; }
+    public void node8Learn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node8Unlearn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node8Status(Player player, Node node) { if(findNode(player, 7).aquired && !findNode(player, 9).aquired) node.locked = false; else node.locked = true; }
     public void node8CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
-    public void node9Learn(Player player) { }
-    public void node9Unlearn(Player player) { }
-    public void node9Status(Player player, Node node) { node.locked = false; }
+    public void node9Learn(Player player) { player.getPersistentDataContainer().set(node9AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node9Unlearn(Player player) { player.getPersistentDataContainer().set(node9AbilityKey, PersistentDataType.BOOLEAN, false); }
+    public void node9Status(Player player, Node node) { if(findNode(player, 7).aquired && !findNode(player, 8).aquired) node.locked = false; else node.locked = true; }
     public void node9CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
 }
