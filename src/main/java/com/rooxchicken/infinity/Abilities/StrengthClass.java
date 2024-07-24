@@ -194,7 +194,7 @@ public class StrengthClass extends Ability
             ItemStack compass = playerCompassMap.get(player);
 
             CompassMeta meta = (CompassMeta)compass.getItemMeta();
-            meta.setDisplayName("§r§4" + track.getName() + ": " + (int)track.getLocation().getX() + ", " + (int)track.getLocation().getY() + ", " + (int)track.getLocation().getZ());
+            meta.setDisplayName("§r§4Tracking: " + track.getName());
             meta.setLodestoneTracked(true);
             meta.setLodestone(track.getLocation());
 
@@ -215,6 +215,7 @@ public class StrengthClass extends Ability
         if(data.has(ability8CooldownKey, PersistentDataType.INTEGER))
             data.set(ability8CooldownKey, PersistentDataType.INTEGER, data.get(ability8CooldownKey, PersistentDataType.INTEGER) - 1);
 
+        if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN))
         if(data.has(ability3CooldownKey, PersistentDataType.INTEGER))
         {
             int cooldown = data.get(ability3CooldownKey, PersistentDataType.INTEGER) - 1;
@@ -318,13 +319,13 @@ public class StrengthClass extends Ability
                 event.setDamage(event.getDamage() * 1.2);
 
                 entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.7f);
-                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.LIME, 0.8f));
+                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.MAROON, 0.8f));
 
                 data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
             }
             else
             {
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.GREEN, 0.8f));
+                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.RED, 0.8f));
                 data.set(ability2CountKey, PersistentDataType.INTEGER, crits);
             }
         }

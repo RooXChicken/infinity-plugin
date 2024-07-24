@@ -86,7 +86,7 @@ public class PlayerSelectGUI implements Listener
                         player.getPersistentDataContainer().set(plugin.strength.ability8TimerKey, PersistentDataType.INTEGER, 60*20);
                         player.getPersistentDataContainer().set(plugin.strength.ability8CooldownKey, PersistentDataType.INTEGER, 30*60*20);
                         plugin.strength.playerTrackMap.put(player, track);
-                        track.sendMessage("§4You are being tracked by " + track.getName());
+                        track.sendMessage("§4You are being tracked...");
                         track.playSound(track.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.7f, 1.0f);
                         player.closeInventory();
                         return;
