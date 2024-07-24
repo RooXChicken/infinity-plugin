@@ -24,6 +24,7 @@ public class ResetCooldown implements CommandExecutor
 
         Player player = Bukkit.getPlayer(sender.getName());
         plugin.speed.resetCooldown(player);
+        plugin.strength.resetCooldown(player);
 
         return true;
     }

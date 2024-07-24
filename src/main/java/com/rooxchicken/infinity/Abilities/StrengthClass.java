@@ -2,11 +2,14 @@ package com.rooxchicken.infinity.Abilities;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
@@ -16,14 +19,18 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -33,7 +40,9 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
 import com.rooxchicken.infinity.Infinity;
+import com.rooxchicken.infinity.Library;
 import com.rooxchicken.infinity.Data.Node;
+import com.rooxchicken.infinity.Data.PlayerSelectGUI;
 
 public class StrengthClass extends Ability
 {
@@ -41,6 +50,9 @@ public class StrengthClass extends Ability
     public int type = -1;
 
     private NamespacedKey ability2CountKey;
+    public NamespacedKey ability3CooldownKey;
+    public NamespacedKey ability8CooldownKey;
+    public NamespacedKey ability8TimerKey;
     
     private NamespacedKey node1AbilityKey;
     private NamespacedKey node2AbilityKey;
@@ -52,19 +64,26 @@ public class StrengthClass extends Ability
     private NamespacedKey node9AbilityKey;
 
     private ArrayList<Player> jumps;
+    public ArrayList<PlayerSelectGUI> guis;
+    public HashMap<Player, Player> playerTrackMap;
+    public HashMap<Player, ItemStack> playerCompassMap;
 
     public StrengthClass(Infinity _plugin)
     {
         super(_plugin);
+        plugin = _plugin;
         
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
+        playerCompassMap = new HashMap<Player, ItemStack>();
+        playerTrackMap = new HashMap<Player, Player>();
+        guis = new ArrayList<PlayerSelectGUI>();
         nodeList = new ArrayList<Node>();
         
         name = "Strength";
         header = "2_srt_Strength_1_0.9_0.2_0.2_true_1.0";
 
         nodeList.add(new Node(_plugin, "strength", "n", "n", 0, 41, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "strength", "icons/12", "+0.5 attack damage", 0, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/12", "+0.25 attack damage", 0, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "lArrow", "n", -20, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", -40, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", 0, 40, -1, false, true, null, null, null, null));
@@ -78,7 +97,7 @@ public class StrengthClass extends Ability
         nodeList.add(new Node(_plugin, "strength", "icons/27", "Give every player in a 20 block radius glowing (COOLDOWN: 1m)", 0, -50, 3, true, false, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
 
         nodeList.add(new Node(_plugin, "strength", "n", "n", -40, 41, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "strength", "icons/44", "+0.5 attack damage", -40, 40, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/44", "+0.25 attack damage", -40, 40, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "lArrow", "n", -60, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", -70, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", -40, 40, -1, false, true, null, null, null, null));
@@ -100,6 +119,9 @@ public class StrengthClass extends Ability
         nodeList.add(new Node(_plugin, "strength", "icons/26", "The lower your health, the more damage you deal (CAP: 2x damage at 1hp)", 40, 5, 9, true, true, this::node9Learn, this::node9Unlearn, this::node9Status, this::node9CanUnlearn));
         
         ability2CountKey = new NamespacedKey(_plugin, "strength_critCount");
+        ability3CooldownKey = new NamespacedKey(_plugin, "strength_glowCD");
+        ability8CooldownKey = new NamespacedKey(_plugin, "strength_compassCD");
+        ability8TimerKey = new NamespacedKey(_plugin, "strength_compassTimer");
 
         node1AbilityKey = new NamespacedKey(_plugin, "strength_1Ability");
         node2AbilityKey = new NamespacedKey(_plugin, "strength_2Ability");
@@ -138,7 +160,8 @@ public class StrengthClass extends Ability
 
     public void resetCooldown(Player player)
     {
-        //player.getPersistentDataContainer().set(doubleJumpCooldownKey, PersistentDataType.INTEGER, 0);
+        player.getPersistentDataContainer().set(ability8CooldownKey, PersistentDataType.INTEGER, 0);
+        player.getPersistentDataContainer().set(ability3CooldownKey, PersistentDataType.INTEGER, 0);
     }
 
     public String tickAbilities(Player player)
@@ -151,7 +174,7 @@ public class StrengthClass extends Ability
             if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
             {
                 player.removePotionEffect(PotionEffectType.WEAKNESS);
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GREEN, 1.0f));
+                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.RED, 1.0f));
                 player.getWorld().playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 1.0f);
             }
         }
@@ -159,15 +182,119 @@ public class StrengthClass extends Ability
         if(data.has(node6AbilityKey, PersistentDataType.BOOLEAN) && data.get(node6AbilityKey, PersistentDataType.BOOLEAN))
         {
             if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
-                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(6.5);
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(5.25);
             else
-                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2.0);
+                player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5);
+        }
+
+        if(playerTrackMap.containsKey(player))
+        {
+            int cooldown = data.get(ability8TimerKey, PersistentDataType.INTEGER) - 1;
+            Player track = playerTrackMap.get(player);
+            ItemStack compass = playerCompassMap.get(player);
+
+            CompassMeta meta = (CompassMeta)compass.getItemMeta();
+            meta.setDisplayName("§r§4" + track.getName() + ": " + (int)track.getLocation().getX() + ", " + (int)track.getLocation().getY() + ", " + (int)track.getLocation().getZ());
+            meta.setLodestoneTracked(true);
+            meta.setLodestone(track.getLocation());
+
+            if(cooldown <= 0)
+            {
+                meta.setDisplayName("§rCompass");
+                meta.setLodestoneTracked(false);
+                meta.setLodestone(null);
+                playerTrackMap.remove(player);
+                playerCompassMap.remove(player);
+            }
+
+            compass.setItemMeta(meta);
+
+            data.set(ability8TimerKey, PersistentDataType.INTEGER, cooldown);
+        }
+
+        if(data.has(ability8CooldownKey, PersistentDataType.INTEGER))
+            data.set(ability8CooldownKey, PersistentDataType.INTEGER, data.get(ability8CooldownKey, PersistentDataType.INTEGER) - 1);
+
+        if(data.has(ability3CooldownKey, PersistentDataType.INTEGER))
+        {
+            int cooldown = data.get(ability3CooldownKey, PersistentDataType.INTEGER) - 1;
+            data.set(ability3CooldownKey, PersistentDataType.INTEGER, cooldown);
+
+            bar += "✴ " + ((cooldown < 0) ? "READY " : (cooldown/20 + "s "));
         }
 
         if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
             player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2, 0));
 
         return bar;
+    }
+
+    @EventHandler
+    private void useGlowing(PlayerSwapHandItemsEvent event)
+    {
+        Player player = event.getPlayer();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(!player.isSneaking() || !(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN)))
+            return;
+
+        if(!data.has(ability3CooldownKey, PersistentDataType.INTEGER))
+            data.set(ability3CooldownKey, PersistentDataType.INTEGER, 0);
+
+        if(data.get(ability3CooldownKey, PersistentDataType.INTEGER) <= 0)
+        {
+            event.setCancelled(true);
+            player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation(), 600, 10, 10, 10, new Particle.DustOptions(Color.RED, 0.8f));
+
+            for(Object o : Library.getNearbyEntities(player.getLocation(), 20))
+            {
+                if(o instanceof Player && o != player)
+                {
+                    ((Player)o).addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 100, 0));
+                }
+            }
+
+            data.set(ability3CooldownKey, PersistentDataType.INTEGER, 60*20);
+        }
+    }
+
+    @EventHandler
+    public void openCompass(PlayerInteractEvent event)
+    {
+        if(!event.getAction().equals(Action.RIGHT_CLICK_AIR) && !event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            return;
+
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if(item != null && item.getType().equals(Material.COMPASS))
+        {
+            PersistentDataContainer data = player.getPersistentDataContainer();
+            if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN))
+            {
+                if(!data.has(ability8CooldownKey, PersistentDataType.INTEGER))
+                    data.set(ability8CooldownKey, PersistentDataType.INTEGER, 0);
+
+                if(data.get(ability8CooldownKey, PersistentDataType.INTEGER) <= 0)
+                {
+                    playerCompassMap.put(player, item);
+                    PlayerSelectGUI gui = new PlayerSelectGUI(plugin, player);
+                    guis.add(gui);
+                }
+                else
+                {
+                    int cooldown = data.get(ability8CooldownKey, PersistentDataType.INTEGER)/20;
+                    int min = cooldown/60;
+                    int seconds = cooldown % 60;
+                    String text = "";
+                    if(min > 0)
+                        text += " " + min + "m";
+                    if(seconds > 0)
+                        text += " " + seconds + "s";
+                    player.sendMessage("§4This ability is on cooldown for" + text + "!");
+                }
+            }
+        }
     }
 
     @EventHandler
@@ -186,17 +313,20 @@ public class StrengthClass extends Ability
                 data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
 
             int crits = data.get(ability2CountKey, PersistentDataType.INTEGER) + 1;
-            if(crits > 7)
+            if(crits > 3)
             {
-                event.setDamage(event.getDamage() * 1.5);
+                event.setDamage(event.getDamage() * 1.2);
 
                 entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.7f);
-                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.WHITE, 0.8f));
+                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.LIME, 0.8f));
 
                 data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
             }
             else
+            {
+                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.GREEN, 0.8f));
                 data.set(ability2CountKey, PersistentDataType.INTEGER, crits);
+            }
         }
 
         if(data.has(node9AbilityKey, PersistentDataType.BOOLEAN) && data.get(node9AbilityKey, PersistentDataType.BOOLEAN))
@@ -255,7 +385,7 @@ public class StrengthClass extends Ability
         }
     }
 
-    public void node0Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5); }
+    public void node0Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.25); }
     public void node0Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.0); }
     public void node0Status(Player player, Node node) { node.locked = false; }
     public void node0CanUnlearn(Player player, Node node) { if(!findNode(player, 1).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) unlearnNode(player, node); }
@@ -275,8 +405,8 @@ public class StrengthClass extends Ability
     public void node3Status(Player player, Node node) { if(findNode(player, 2).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) node.locked = false; else node.locked = true; }
     public void node3CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
-    public void node4Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(2.0); }
-    public void node4Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5); }
+    public void node4Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5); }
+    public void node4Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.25); }
     public void node4Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 7).aquired && !findNode(player, 3).aquired) node.locked = false; else node.locked = true; }
     public void node4CanUnlearn(Player player, Node node) { if(!findNode(player, 5).aquired && !findNode(player, 6).aquired) unlearnNode(player, node); }
 

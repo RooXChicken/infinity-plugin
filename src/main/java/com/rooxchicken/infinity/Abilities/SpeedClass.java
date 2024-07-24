@@ -107,7 +107,7 @@ public class SpeedClass extends Ability
         nodeList.add(new Node(_plugin, "speed", "line", "n", 35, 15, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "line", "n", 40, 20, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "line", "n", 45, 25, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "icons/39", "+5% attack speed +8% chance of lightning on hit", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/39", "+5% attack speed", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
         
         jumps = new ArrayList<Player>();
 
@@ -172,13 +172,13 @@ public class SpeedClass extends Ability
             {
                 launch.setPitch(-5);
                 player.setVelocity(launch.getDirection().multiply(1.6));
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 175, 0.4, 0.7, 0.4, new Particle.DustOptions(Color.WHITE, 1f));
+                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 175, 0.4, 0.7, 0.4, new Particle.DustOptions(Color.TEAL, 1f));
             }
             else
             {
                 launch.setPitch(-70);
                 player.setVelocity(launch.getDirection());
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().subtract(0,0.5,0), 175, 1, 0.1, 1, new Particle.DustOptions(Color.WHITE, 1f));
+                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().subtract(0,0.5,0), 175, 1, 0.1, 1, new Particle.DustOptions(Color.TEAL, 1f));
             
                 if(!jumps.contains(player))
                     jumps.add(player);
@@ -205,7 +205,7 @@ public class SpeedClass extends Ability
         {
             int cooldown =  data.get(doubleJumpCooldownKey, PersistentDataType.INTEGER) - 1;
             data.set(doubleJumpCooldownKey, PersistentDataType.INTEGER, cooldown);
-            bar = "☁ " + ((cooldown >= 0) ? (cooldown/20 + 1) + "s" : "READY");
+            bar = "☁ " + ((cooldown >= 0) ? (cooldown/20 + 1) + "s " : "READY ");
 
             if(player.isOnGround() && data.get(doubleJumpCooldownKey, PersistentDataType.INTEGER) <= 0)
                 player.setAllowFlight(true);
