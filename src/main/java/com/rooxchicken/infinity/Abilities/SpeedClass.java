@@ -235,11 +235,11 @@ public class SpeedClass extends Ability
         LivingEntity entity = (LivingEntity)event.getEntity();
         PersistentDataContainer data = player.getPersistentDataContainer();
 
-        if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.08)
-        {
-            event.getEntity().getWorld().strikeLightning(event.getEntity().getLocation());
-            event.setDamage(event.getDamage() * 1.6);
-        }
+        // if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.08)
+        // {
+        //     event.getEntity().getWorld().strikeLightning(event.getEntity().getLocation());
+        //     event.setDamage(event.getDamage() * 1.6);
+        // }
 
         if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.1)
         {
