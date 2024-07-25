@@ -277,13 +277,13 @@ public class SpeedClass extends Ability
     public void node5Status(Player player, Node node) { if(findNode(player, "1").aquired && !findNode(player, "20").aquired) node.locked = false; else node.locked = true; }
     public void node5CanUnlearn(Player player, Node node) { if(!findNode(player, "19").aquired) unlearnNode(player, node); }
 
-    public void node6Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.4f); }
+    public void node6Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.3f); }
     public void node6Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4f); }
     public void node6Status(Player player, Node node) { if(findNode(player, "28").aquired && !findNode(player, "1").aquired) node.locked = false; else node.locked = true; }
     public void node6CanUnlearn(Player player, Node node) { if(!findNode(player, "39").aquired) unlearnNode(player, node); }
 
-    public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.62f); }
-    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.4f); }
+    public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.5f); }
+    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.3f); }
     public void node7Status(Player player, Node node) { if(!findNode(player, "42").aquired && findNode(player, "4").aquired) node.locked = false; else node.locked = true; }
     public void node7CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 

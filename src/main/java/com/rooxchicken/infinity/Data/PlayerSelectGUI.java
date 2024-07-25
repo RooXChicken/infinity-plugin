@@ -16,6 +16,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryOpenEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Skull;
@@ -83,8 +84,16 @@ public class PlayerSelectGUI implements Listener
                     Player track = meta.getOwningPlayer().getPlayer();
                     if(track.isValid())
                     {
+                        ItemStack compass = plugin.strength.playerCompassMap.get(player);
                         player.getPersistentDataContainer().set(plugin.strength.ability8TimerKey, PersistentDataType.INTEGER, 60*20);
                         player.getPersistentDataContainer().set(plugin.strength.ability8CooldownKey, PersistentDataType.INTEGER, 30*60*20);
+
+                        CompassMeta compassMeta = (CompassMeta)compass.getItemMeta();
+                        compassMeta.setDisplayName("§r§4Tracking: " + track.getName());
+                        compassMeta.setLodestoneTracked(false);
+
+                        compass.setItemMeta(compassMeta);
+
                         plugin.strength.playerTrackMap.put(player, track);
                         track.sendMessage("§4You are being tracked...");
                         track.playSound(track.getLocation(), Sound.ENTITY_WITHER_SPAWN, 0.7f, 1.0f);

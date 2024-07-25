@@ -191,23 +191,20 @@ public class StrengthClass extends Ability
         {
             int cooldown = data.get(ability8TimerKey, PersistentDataType.INTEGER) - 1;
             Player track = playerTrackMap.get(player);
-            ItemStack compass = playerCompassMap.get(player);
-
+            ItemStack compass = plugin.strength.playerCompassMap.get(player);
             CompassMeta meta = (CompassMeta)compass.getItemMeta();
-            meta.setDisplayName("§r§4Tracking: " + track.getName());
-            meta.setLodestoneTracked(true);
             meta.setLodestone(track.getLocation());
 
             if(cooldown <= 0)
             {
                 meta.setDisplayName("§rCompass");
-                meta.setLodestoneTracked(false);
                 meta.setLodestone(null);
                 playerTrackMap.remove(player);
                 playerCompassMap.remove(player);
             }
 
             compass.setItemMeta(meta);
+
 
             data.set(ability8TimerKey, PersistentDataType.INTEGER, cooldown);
         }
