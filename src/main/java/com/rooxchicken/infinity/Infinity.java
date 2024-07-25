@@ -56,6 +56,7 @@ import com.google.common.base.Predicate;
 import com.rooxchicken.infinity.Abilities.Ability;
 import com.rooxchicken.infinity.Abilities.HealthClass;
 import com.rooxchicken.infinity.Abilities.SpeedClass;
+import com.rooxchicken.infinity.Abilities.StealthClass;
 import com.rooxchicken.infinity.Abilities.StrengthClass;
 import com.rooxchicken.infinity.Commands.FirstAbility;
 import com.rooxchicken.infinity.Commands.ResetCooldown;
@@ -80,6 +81,7 @@ public class Infinity extends JavaPlugin implements Listener
     public StrengthClass strength;
     public SpeedClass speed;
     public HealthClass health;
+    public StealthClass stealth;
 
     @Override
     public void onEnable()
@@ -125,6 +127,7 @@ public class Infinity extends JavaPlugin implements Listener
         strength = new StrengthClass(this);
         speed = new SpeedClass(this);
         health = new HealthClass(this);
+        stealth = new StealthClass(this);
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
         {

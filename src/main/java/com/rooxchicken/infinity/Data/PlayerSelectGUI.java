@@ -125,18 +125,18 @@ public class PlayerSelectGUI implements Listener
     public void updateGUI()
     {
         Inventory inventory = player.getOpenInventory().getTopInventory();
-        ItemStack leftArrow = new ItemStack(Material.RED_DYE);
-        ItemMeta lMeta = leftArrow.getItemMeta();
+        ItemStack leftarrow = new ItemStack(Material.RED_DYE);
+        ItemMeta lMeta = leftarrow.getItemMeta();
         lMeta.setDisplayName("§7Left");
-        leftArrow.setItemMeta(lMeta);
+        leftarrow.setItemMeta(lMeta);
 
-        ItemStack rightArrow = new ItemStack(Material.GREEN_DYE);
-        ItemMeta rMeta = leftArrow.getItemMeta();
+        ItemStack rightarrow = new ItemStack(Material.GREEN_DYE);
+        ItemMeta rMeta = leftarrow.getItemMeta();
         rMeta.setDisplayName("§7Right");
-        rightArrow.setItemMeta(rMeta);
+        rightarrow.setItemMeta(rMeta);
 
-        inventory.setItem(0, leftArrow);
-        inventory.setItem(8, rightArrow);
+        inventory.setItem(0, leftarrow);
+        inventory.setItem(8, rightarrow);
 
         ArrayList<Player> players = getPlayers();
 
@@ -155,6 +155,6 @@ public class PlayerSelectGUI implements Listener
             }
         }
 
-        //player.getOpenInventory().setItem(guiIndex, rightArrow);
+        //player.getOpenInventory().setItem(guiIndex, rightarrow);
     }
 }

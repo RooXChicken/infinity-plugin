@@ -59,19 +59,19 @@ public class SpeedClass extends Ability
 
         nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 41, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "icons/28", "+10% generic speed", 20, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
-        nodeList.add(new Node(_plugin, "speed", "rArrow", "n", 40, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "rarrow", "n", 40, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 40, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "uArrow", "n", 20, 20, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "uarrow", "n", 20, 20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 10, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 40, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "lArrow", "n", 0, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "larrow", "n", 0, 40, -1, false, false, null, null, null, null));
 
         nodeList.add(new Node(_plugin, "speed", "icons/1", "Double Jump (COOLDOWN: 30s)", -20, 40, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
-        nodeList.add(new Node(_plugin, "speed", "lArrow", "n", -40, 40, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "larrow", "n", -40, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -60, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -20, 40, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "uArrow", "n", -20, 20, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "uarrow", "n", -20, 20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -20, 10, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -40, 10, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -40, -10, -1, false, false, null, null, null, null));
@@ -102,11 +102,11 @@ public class SpeedClass extends Ability
         
         
         nodeList.add(new Node(_plugin, "speed", "icons/4", "+10% attack speed", 60, 40, 6, true, false, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
-        nodeList.add(new Node(_plugin, "speed", "uArrow", "n", 60, 20, -1, false, false, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "uarrow", "n", 60, 20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 5, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "line", "n", 35, 15, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "line", "n", 40, 20, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "line", "n", 45, 25, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "lline", "n", 35, 15, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "lline", "n", 40, 20, -1, false, true, null, null, null, null));
+        nodeList.add(new Node(_plugin, "speed", "lline", "n", 45, 25, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "icons/39", "+5% attack speed", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
         
         jumps = new ArrayList<Player>();

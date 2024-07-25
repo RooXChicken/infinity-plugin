@@ -33,23 +33,11 @@ public class NodeAction implements CommandExecutor
                     case 1: plugin.speed.sendNodes(player, true); break;
                     case 2: plugin.health.sendNodes(player, true); break;
                     //case 3: plugin.luck.sendNodes(); break;
-                    //case 4: plugin.stealth.sendNodes(); break;
+                    case 4: plugin.stealth.sendNodes(player, true); break;
                 }
             break;
             case 1:
-                switch(Integer.parseInt(args[1]))
-                {
-                    case 0: plugin.strength.findNode(player, "12").action(player, Integer.parseInt(args[2])); break;
-                    case 1: plugin.strength.findNode(player, "11").action(player, Integer.parseInt(args[2])); break;
-                    case 2: plugin.strength.findNode(player, "30").action(player, Integer.parseInt(args[2])); break;
-                    case 3: plugin.strength.findNode(player, "27").action(player, Integer.parseInt(args[2])); break;
-                    case 4: plugin.strength.findNode(player, "44").action(player, Integer.parseInt(args[2])); break;
-                    case 5: plugin.strength.findNode(player, "14").action(player, Integer.parseInt(args[2])); break;
-                    case 6: plugin.strength.findNode(player, "16").action(player, Integer.parseInt(args[2])); break;
-                    case 7: plugin.strength.findNode(player, "22").action(player, Integer.parseInt(args[2])); break;
-                    case 8: plugin.strength.findNode(player, "7").action(player, Integer.parseInt(args[2])); break;
-                    case 9: plugin.strength.findNode(player, "26").action(player, Integer.parseInt(args[2])); break;
-                }
+                plugin.strength.findNode(player,Integer.parseInt(args[1])).action(player, Integer.parseInt(args[2]));
                 plugin.strength.sendNodes(player, false);
             break;
 
@@ -65,9 +53,13 @@ public class NodeAction implements CommandExecutor
                     case 6: plugin.speed.findNode(player, "4").action(player, Integer.parseInt(args[2])); break;
                     case 7: plugin.speed.findNode(player, "39").action(player, Integer.parseInt(args[2])); break;
                     case 8: plugin.speed.findNode(player, "19").action(player, Integer.parseInt(args[2])); break;
-                    //case 6: plugin.speed.nodes.get(22).action(player, Integer.parseInt(args[2])); break;
                 }
                 plugin.speed.sendNodes(player, false);
+            break;
+
+            case 5:
+                plugin.stealth.findNode(player, Integer.parseInt(args[1])).action(player, Integer.parseInt(args[2]));
+                plugin.stealth.sendNodes(player, false);
             break;
         }
 
