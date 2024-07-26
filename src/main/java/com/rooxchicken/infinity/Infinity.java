@@ -58,6 +58,7 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Predicate;
 import com.rooxchicken.infinity.Abilities.Ability;
 import com.rooxchicken.infinity.Abilities.HealthClass;
+import com.rooxchicken.infinity.Abilities.LuckClass;
 import com.rooxchicken.infinity.Abilities.SpeedClass;
 import com.rooxchicken.infinity.Abilities.StealthClass;
 import com.rooxchicken.infinity.Abilities.StrengthClass;
@@ -85,6 +86,7 @@ public class Infinity extends JavaPlugin implements Listener
     public SpeedClass speed;
     public HealthClass health;
     public StealthClass stealth;
+    public LuckClass luck;
 
     @Override
     public void onEnable()
@@ -131,6 +133,7 @@ public class Infinity extends JavaPlugin implements Listener
         speed = new SpeedClass(this);
         health = new HealthClass(this);
         stealth = new StealthClass(this);
+        luck = new LuckClass(this);
 
         getServer().getScheduler().scheduleSyncRepeatingTask(this, new Runnable()
         {

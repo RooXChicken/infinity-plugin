@@ -32,7 +32,7 @@ public class NodeAction implements CommandExecutor
                     case 0: plugin.strength.sendNodes(player, true); break;
                     case 1: plugin.speed.sendNodes(player, true); break;
                     case 2: plugin.health.sendNodes(player, true); break;
-                    //case 3: plugin.luck.sendNodes(); break;
+                    case 3: plugin.luck.sendNodes(player, true); break;
                     case 4: plugin.stealth.sendNodes(player, true); break;
                 }
             break;
@@ -55,6 +55,11 @@ public class NodeAction implements CommandExecutor
                     case 8: plugin.speed.findNode(player, "19").action(player, Integer.parseInt(args[2])); break;
                 }
                 plugin.speed.sendNodes(player, false);
+            break;
+
+            case 4:
+                plugin.luck.findNode(player, Integer.parseInt(args[1])).action(player, Integer.parseInt(args[2]));
+                plugin.luck.sendNodes(player, false);
             break;
 
             case 5:
