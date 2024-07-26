@@ -71,6 +71,8 @@ public class LuckClass extends Ability
 {
     private Infinity plugin;
     public int type = -1;
+
+    private HashMap<Player, PotionEffect> playerEffectMap;
     
     private NamespacedKey node0AbilityKey;
     private NamespacedKey node1AbilityKey;
@@ -92,6 +94,7 @@ public class LuckClass extends Ability
         
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
         playerProjectileMap = new HashMap<Player, ItemStack>();
+        playerEffectMap = new HashMap<Player, PotionEffect>();
         doubleBlockList = new ArrayList<Material>();
 
         doubleBlockList.add(Material.RAW_IRON);
@@ -196,6 +199,50 @@ public class LuckClass extends Ability
     //     player.getPersistentDataContainer().set(ability8CooldownKey, PersistentDataType.INTEGER, 0);
     //     player.getPersistentDataContainer().set(ability3CooldownKey, PersistentDataType.INTEGER, 0);
     // }
+
+    @EventHandler
+    private void doublePotionLength(EntityPotionEffectEvent event)
+    {
+        if(event.getNewEffect() == null || !(event.getEntity() instanceof Player))
+            return;
+
+        Player player = (Player)event.getEntity();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node6AbilityKey, PersistentDataType.BOOLEAN) && data.get(node6AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.25)
+        {
+            PotionEffect potion = event.getNewEffect();
+            if(!playerEffectMap.containsKey(player))
+                playerEffectMap.put(player, potion);
+            
+            if(comparePotionEffects(playerEffectMap.get(player), potion))
+            {
+                playerEffectMap.remove(player);
+                playerEffectMap.put(player, potion);
+                return;
+            }
+
+            playerEffectMap.remove(player);
+            playerEffectMap.put(player, potion);
+
+            player.addPotionEffect(new PotionEffect(potion.getType(), potion.getDuration() * 2, potion.getAmplifier()));
+            event.setCancelled(true);
+        }
+    }
+
+    private boolean comparePotionEffects(PotionEffect potion1, PotionEffect potion2)
+    {
+        PotionEffectType type1 = potion1.getType();
+        PotionEffectType type2 = potion2.getType();
+
+        int amplifier1 = potion1.getAmplifier();
+        int amplifier2 = potion2.getAmplifier();
+
+        int duration1 = potion1.getDuration();
+        int duration2 = potion2.getDuration();
+
+        return (type1.equals(type2) && amplifier1 == amplifier2 && duration1 * 2 == duration2);
+    }
 
     @EventHandler
     public void preventConsumeEvent(ProjectileLaunchEvent event)
