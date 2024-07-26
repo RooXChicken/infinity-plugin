@@ -20,6 +20,7 @@ import org.bukkit.inventory.meta.CompassMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.Skull;
+import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
 import com.rooxchicken.infinity.Infinity;
@@ -78,7 +79,7 @@ public class PlayerSelectGUI implements Listener
             break;
             
             default:
-                if(clicked.getType().equals(Material.PLAYER_HEAD))
+                if(clicked != null && clicked.getType().equals(Material.PLAYER_HEAD))
                 {
                     SkullMeta meta = (SkullMeta)clicked.getItemMeta();
                     Player track = meta.getOwningPlayer().getPlayer();
@@ -116,10 +117,16 @@ public class PlayerSelectGUI implements Listener
     {
         ArrayList<Player> players = new ArrayList<Player>();
         for(Player p : Bukkit.getOnlinePlayers())
-            if(player != p)
+            if(player != p && !preventTracking(p))
             players.add(p);
 
         return players;
+    }
+
+    private boolean preventTracking(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        return (data.has(plugin.stealth.node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(plugin.stealth.node5AbilityKey, PersistentDataType.BOOLEAN));
     }
 
     public void updateGUI()

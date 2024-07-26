@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -14,9 +15,13 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.entity.Arrow;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -24,6 +29,8 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.EntityDamageEvent.DamageModifier;
+import org.bukkit.event.entity.EntityPotionEffectEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
@@ -39,6 +46,15 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.ProtocolManager;
+import com.comphenix.protocol.events.ListenerPriority;
+import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.Pair;
 import com.rooxchicken.infinity.Infinity;
 import com.rooxchicken.infinity.Library;
 import com.rooxchicken.infinity.Data.Node;
@@ -48,36 +64,58 @@ public class StealthClass extends Ability
 {
     private Infinity plugin;
     public int type = -1;
-
-    private NamespacedKey ability2CountKey;
-    public NamespacedKey ability3CooldownKey;
-    public NamespacedKey ability8CooldownKey;
-    public NamespacedKey ability8TimerKey;
     
+    private NamespacedKey node0AbilityKey;
     private NamespacedKey node1AbilityKey;
     private NamespacedKey node2AbilityKey;
     private NamespacedKey node3AbilityKey;
-    private NamespacedKey node5AbilityKey;
+    private NamespacedKey node4AbilityKey;
+    public NamespacedKey node5AbilityKey;
     private NamespacedKey node6AbilityKey;
     private NamespacedKey node7AbilityKey;
     private NamespacedKey node8AbilityKey;
     private NamespacedKey node9AbilityKey;
 
-    private ArrayList<Player> jumps;
-    public ArrayList<PlayerSelectGUI> guis;
-    public HashMap<Player, Player> playerTrackMap;
-    public HashMap<Player, ItemStack> playerCompassMap;
+    private HashMap<Player, Double> playerSpeedMap;
+
+    private ProtocolManager protocolManager;
+    private PacketContainer packet;
+
+    private PacketAdapter packetAdapter;
 
     public StealthClass(Infinity _plugin)
     {
         super(_plugin);
         plugin = _plugin;
         
-        playerNodeMap = new HashMap<Player, ArrayList<Node>>();
-        playerCompassMap = new HashMap<Player, ItemStack>();
-        playerTrackMap = new HashMap<Player, Player>();
-        guis = new ArrayList<PlayerSelectGUI>();
         nodeList = new ArrayList<Node>();
+        playerNodeMap = new HashMap<Player, ArrayList<Node>>();
+
+        protocolManager = ProtocolLibrary.getProtocolManager();
+
+        packet = protocolManager.createPacket(PacketType.Play.Server.ENTITY_EQUIPMENT);
+        
+        List<Pair<EnumWrappers.ItemSlot, ItemStack>> list = new ArrayList<>();
+        list.add(new Pair<>(EnumWrappers.ItemSlot.HEAD, new ItemStack(Material.AIR)));
+        list.add(new Pair<>(EnumWrappers.ItemSlot.CHEST, new ItemStack(Material.AIR)));
+        list.add(new Pair<>(EnumWrappers.ItemSlot.LEGS, new ItemStack(Material.AIR)));
+        list.add(new Pair<>(EnumWrappers.ItemSlot.FEET, new ItemStack(Material.AIR)));
+        list.add(new Pair<>(EnumWrappers.ItemSlot.MAINHAND, new ItemStack(Material.AIR)));
+        list.add(new Pair<>(EnumWrappers.ItemSlot.OFFHAND, new ItemStack(Material.AIR)));
+        packet.getSlotStackPairLists().write(0, list);
+
+        packetAdapter = new PacketAdapter(_plugin, ListenerPriority.NORMAL, PacketType.Play.Server.ENTITY_EQUIPMENT)
+        {
+            @Override
+            public void onPacketSending(PacketEvent event)
+            {
+                PersistentDataContainer data = event.getPlayer().getPersistentDataContainer();
+                if(data.has(node9AbilityKey, PersistentDataType.BOOLEAN) && data.get(node9AbilityKey, PersistentDataType.BOOLEAN))
+                    event.setCancelled(true);
+            }
+        };
+
+        protocolManager.addPacketListener(packetAdapter);
         
         name = "Strength";
         header = "2_srt_Stealth_5_0.2_0.2_0.2_true_1.0";
@@ -135,19 +173,18 @@ public class StealthClass extends Ability
 
         nodeList.add(new Node(_plugin, "stealth", "icons/50", "True invisibility when wearing only Leather Boots", -25, -55, 9, true, false, this::node9Learn, this::node9Unlearn, this::node9Status, this::node9CanUnlearn));
         
-        // ability2CountKey = new NamespacedKey(_plugin, "strength_critCount");
-        // ability3CooldownKey = new NamespacedKey(_plugin, "strength_glowCD");
-        // ability8CooldownKey = new NamespacedKey(_plugin, "strength_compassCD");
-        // ability8TimerKey = new NamespacedKey(_plugin, "strength_compassTimer");
+        playerSpeedMap = new HashMap<Player, Double>();
 
-        // node1AbilityKey = new NamespacedKey(_plugin, "strength_1Ability");
-        // node2AbilityKey = new NamespacedKey(_plugin, "strength_2Ability");
-        // node3AbilityKey = new NamespacedKey(_plugin, "strength_3Ability");
-        // node5AbilityKey = new NamespacedKey(_plugin, "strength_5Ability");
-        // node6AbilityKey = new NamespacedKey(_plugin, "strength_6Ability");
-        // node7AbilityKey = new NamespacedKey(_plugin, "strength_7Ability");
-        // node8AbilityKey = new NamespacedKey(_plugin, "strength_8Ability");
-        // node9AbilityKey = new NamespacedKey(_plugin, "strength_9Ability");
+        node0AbilityKey = new NamespacedKey(_plugin, "stealth_0Ability");
+        node1AbilityKey = new NamespacedKey(_plugin, "stealth_1Ability");
+        node2AbilityKey = new NamespacedKey(_plugin, "stealth_2Ability");
+        node3AbilityKey = new NamespacedKey(_plugin, "stealth_3Ability");
+        node4AbilityKey = new NamespacedKey(_plugin, "stealth_4Ability");
+        node5AbilityKey = new NamespacedKey(_plugin, "stealth_5Ability");
+        node6AbilityKey = new NamespacedKey(_plugin, "stealth_6Ability");
+        node7AbilityKey = new NamespacedKey(_plugin, "stealth_7Ability");
+        node8AbilityKey = new NamespacedKey(_plugin, "stealth_8Ability");
+        node9AbilityKey = new NamespacedKey(_plugin, "stealth_9Ability");
     }
 
     public Node findNode(Player player, String icon)
@@ -181,68 +218,163 @@ public class StealthClass extends Ability
     //     player.getPersistentDataContainer().set(ability3CooldownKey, PersistentDataType.INTEGER, 0);
     // }
 
-    // public String tickAbilities(Player player)
+    public String tickAbilities(Player player)
+    {
+        String bar = "";
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN))
+            player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 2, 0));
+
+        if(data.has(node9AbilityKey, PersistentDataType.BOOLEAN) && data.get(node9AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(player.getInventory().getHelmet() == null && player.getInventory().getChestplate() == null && player.getInventory().getLeggings() == null && player.getInventory().getBoots() != null && player.getInventory().getBoots().getType().equals(Material.LEATHER_BOOTS))
+            {
+                player.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, 2, 0, false, false));
+                packet.getIntegers().write(0, player.getEntityId());
+                for(Player p : Bukkit.getOnlinePlayers())
+                {
+                    if(p != player)
+                        protocolManager.sendServerPacket(p, packet);
+                }
+            }
+        }
+
+        if(data.has(node1AbilityKey, PersistentDataType.BOOLEAN) && data.get(node1AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(player.isSneaking())
+            {
+                if(!playerSpeedMap.containsKey(player))
+                    playerSpeedMap.put(player, player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue());
+
+                player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(playerSpeedMap.get(player) * 2.4);
+            }
+            else if(playerSpeedMap.containsKey(player))
+            {
+                player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(playerSpeedMap.get(player));
+                playerSpeedMap.remove(player);
+            }
+        }
+
+        return bar;
+    }
+
+    @EventHandler
+    private void cancelGlowing(EntityPotionEffectEvent event)
+    {
+        if(!(event.getEntity() instanceof Player))
+            return;
+
+        Player player = (Player)event.getEntity();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node2AbilityKey, PersistentDataType.BOOLEAN) && data.get(node2AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(event.getNewEffect() != null && event.getNewEffect().getType().equals(PotionEffectType.GLOWING))
+                event.setCancelled(true);
+
+        }
+    }
+
+    @EventHandler
+    public void giveGlowingArrows(EntityDamageByEntityEvent event)
+    {
+        if(!(event.getEntity() instanceof LivingEntity && event.getDamager() instanceof Projectile))
+            return;
+
+        LivingEntity entity = (LivingEntity)event.getEntity();
+        Projectile damager = (Projectile)event.getDamager();
+
+        Player player = (Player)damager.getShooter();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(damager instanceof Arrow)
+        {
+            if(data.has(node4AbilityKey, PersistentDataType.BOOLEAN) && data.get(node4AbilityKey, PersistentDataType.BOOLEAN))
+                entity.addPotionEffect(new PotionEffect(PotionEffectType.GLOWING, 30*20, 0));
+
+            if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN))
+                event.setDamage(event.getDamage() + damager.getTicksLived()/10.0);
+            
+        }
+    }
+
+    @EventHandler
+    public void backstab(EntityDamageByEntityEvent event)
+    {
+        if(!(event.getEntity() instanceof LivingEntity && event.getDamager() instanceof Player))
+            return;
+
+        LivingEntity entity = (LivingEntity)event.getEntity();
+        Player player = (Player)event.getDamager();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node6AbilityKey, PersistentDataType.BOOLEAN) && data.get(node6AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            float difference = (entity.getLocation().getYaw() + 180 % 360) - (player.getLocation().getYaw() + 180 % 360);
+            if(Math.abs(difference) < 60)
+            {
+                event.setDamage(event.getDamage() + 0.5);
+                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 60, 0.4, 0.5, 0.4, new Particle.DustOptions(Color.GRAY, 1.0f));
+                entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.6f);
+            }
+        }
+    }
+
+    @EventHandler
+    public void preventTargetting(EntityTargetLivingEntityEvent event)
+    {
+        if(!(event.getTarget() instanceof Player))
+            return;
+
+        Player target = (Player)event.getTarget();
+        PersistentDataContainer data = target.getPersistentDataContainer();
+        if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN))
+            event.setCancelled(true);
+    }
+
+    // @EventHandler
+    // private void replacePoison(EntityPotionEffectEvent event)
     // {
-    //     String bar = "";
+    //     if(event.getNewEffect() == null || !(event.getEntity() instanceof Player))
+    //         return;
+
+    //     Player player = (Player)event.getEntity();
     //     PersistentDataContainer data = player.getPersistentDataContainer();
 
-    //     if(data.has(node1AbilityKey, PersistentDataType.BOOLEAN) && data.get(node1AbilityKey, PersistentDataType.BOOLEAN))
+    //     if(data.has(node2AbilityKey, PersistentDataType.BOOLEAN) && data.get(node2AbilityKey, PersistentDataType.BOOLEAN))
     //     {
-    //         if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
+    //         PotionEffect potion = event.getNewEffect();
+    //         if(!oldPotionEffectMap.containsKey(player))
+    //             oldPotionEffectMap.put(player, potion);
+            
+    //         if(comparePotionEffects(oldPotionEffectMap.get(player), potion))
     //         {
-    //             player.removePotionEffect(PotionEffectType.WEAKNESS);
-    //             player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.RED, 1.0f));
-    //             player.getWorld().playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 1.0f);
-    //         }
-    //     }
-
-    //     if(data.has(node6AbilityKey, PersistentDataType.BOOLEAN) && data.get(node6AbilityKey, PersistentDataType.BOOLEAN))
-    //     {
-    //         if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
-    //             player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(5.25);
-    //         else
-    //             player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5);
-    //     }
-
-    //     if(playerTrackMap.containsKey(player))
-    //     {
-    //         int cooldown = data.get(ability8TimerKey, PersistentDataType.INTEGER) - 1;
-    //         Player track = playerTrackMap.get(player);
-    //         ItemStack compass = plugin.strength.playerCompassMap.get(player);
-    //         CompassMeta meta = (CompassMeta)compass.getItemMeta();
-    //         meta.setLodestone(track.getLocation());
-
-    //         if(cooldown <= 0)
-    //         {
-    //             meta.setDisplayName("§rCompass");
-    //             meta.setLodestone(null);
-    //             playerTrackMap.remove(player);
-    //             playerCompassMap.remove(player);
+    //             oldPotionEffectMap.remove(player);
+    //             oldPotionEffectMap.put(player, potion);
+    //             return;
     //         }
 
-    //         compass.setItemMeta(meta);
+    //         oldPotionEffectMap.remove(player);
+    //         oldPotionEffectMap.put(player, potion);
 
-
-    //         data.set(ability8TimerKey, PersistentDataType.INTEGER, cooldown);
+    //         event.setCancelled(true);
     //     }
-
-    //     if(data.has(ability8CooldownKey, PersistentDataType.INTEGER))
-    //         data.set(ability8CooldownKey, PersistentDataType.INTEGER, data.get(ability8CooldownKey, PersistentDataType.INTEGER) - 1);
-
-    //     if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN))
-    //     if(data.has(ability3CooldownKey, PersistentDataType.INTEGER))
-    //     {
-    //         int cooldown = data.get(ability3CooldownKey, PersistentDataType.INTEGER) - 1;
-    //         data.set(ability3CooldownKey, PersistentDataType.INTEGER, cooldown);
-
-    //         bar += "✴ " + ((cooldown < 0) ? "READY " : (cooldown/20 + "s "));
-    //     }
-
-    //     if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
-    //         player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2, 0));
-
-    //     return bar;
     // }
+
+    private boolean comparePotionEffects(PotionEffect potion1, PotionEffect potion2)
+    {
+        PotionEffectType type1 = potion1.getType();
+        PotionEffectType type2 = potion2.getType();
+
+        int amplifier1 = potion1.getAmplifier();
+        int amplifier2 = potion2.getAmplifier();
+
+        int duration1 = potion1.getDuration();
+        int duration2 = potion2.getDuration();
+
+        return (type1.equals(type2) && (amplifier1+1)*2 - 1 == amplifier2 && duration1 * 2 == duration2);
+    }
 
     // @EventHandler
     // private void useGlowing(PlayerSwapHandItemsEvent event)
@@ -400,53 +532,53 @@ public class StealthClass extends Ability
     //     }
     // }
 
-    public void node0Learn(Player player) {  }
-    public void node0Unlearn(Player player) {  }
+    public void node0Learn(Player player) { player.getPersistentDataContainer().set(node0AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node0Unlearn(Player player) { player.getPersistentDataContainer().set(node0AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node0Status(Player player, Node node) { node.locked = false; }
     public void node0CanUnlearn(Player player, Node node) { if(!findNode(player, 1).aquired && !findNode(player, 2).aquired) unlearnNode(player, node); }
 
-    public void node1Learn(Player player) {  }
-    public void node1Unlearn(Player player) {  }
+    public void node1Learn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node1Unlearn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node1Status(Player player, Node node) { node.locked = !(findNode(player, 0).aquired && !findNode(player, 2).aquired); }
     public void node1CanUnlearn(Player player, Node node) { if(!findNode(player, 4).aquired) unlearnNode(player, node); }
 
-    public void node2Learn(Player player) {  }
-    public void node2Unlearn(Player player) {  }
+    public void node2Learn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node2Unlearn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node2Status(Player player, Node node) { node.locked = !(findNode(player, 0).aquired && !findNode(player, 1).aquired); }
     public void node2CanUnlearn(Player player, Node node) { if(!findNode(player, 3).aquired && !findNode(player, 7).aquired) unlearnNode(player, node); }
 
-    public void node3Learn(Player player) {  }
-    public void node3Unlearn(Player player) {  }
+    public void node3Learn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node3Unlearn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node3Status(Player player, Node node) { node.locked = !(findNode(player, 2).aquired && !findNode(player, 7).aquired); }
     public void node3CanUnlearn(Player player, Node node) {  unlearnNode(player, node); }
 
-    public void node4Learn(Player player) {  }
-    public void node4Unlearn(Player player) {  }
+    public void node4Learn(Player player) { player.getPersistentDataContainer().set(node4AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node4Unlearn(Player player) { player.getPersistentDataContainer().set(node4AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node4Status(Player player, Node node) { node.locked = !(findNode(player, 1).aquired); }
     public void node4CanUnlearn(Player player, Node node) { if(!(findNode(player, 5).aquired)) unlearnNode(player, node); }
 
-    public void node5Learn(Player player) {  }
-    public void node5Unlearn(Player player) {  }
+    public void node5Learn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node5Unlearn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node5Status(Player player, Node node) { node.locked = !(findNode(player, 4).aquired); }
     public void node5CanUnlearn(Player player, Node node) { if(!findNode(player, 6).aquired && !findNode(player, 8).aquired && !findNode(player, 7).aquired) unlearnNode(player, node); }
 
-    public void node6Learn(Player player) {  }
-    public void node6Unlearn(Player player) {  }
+    public void node6Learn(Player player) { player.getPersistentDataContainer().set(node6AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node6Unlearn(Player player) { player.getPersistentDataContainer().set(node6AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node6Status(Player player, Node node) { node.locked = !(findNode(player, 5).aquired && !findNode(player, 8).aquired && !findNode(player, 7).aquired); }
     public void node6CanUnlearn(Player player, Node node) { if(!findNode(player, 9).aquired) unlearnNode(player, node); }
 
-    public void node7Learn(Player player) {  }
-    public void node7Unlearn(Player player) {  }
+    public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node7Status(Player player, Node node) { node.locked = !((findNode(player, 2).aquired && !findNode(player, 3).aquired) || (findNode(player, 5).aquired && !findNode(player, 6).aquired && !findNode(player, 8).aquired)); }
     public void node7CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
-    public void node8Learn(Player player) {  }
-    public void node8Unlearn(Player player) {  }
+    public void node8Learn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node8Unlearn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node8Status(Player player, Node node) { node.locked = !(findNode(player, 5).aquired && !findNode(player, 7).aquired && !findNode(player, 6).aquired); }
     public void node8CanUnlearn(Player player, Node node) { if(!findNode(player, 9).aquired) unlearnNode(player, node); }
 
-    public void node9Learn(Player player) {  }
-    public void node9Unlearn(Player player) {  }
+    public void node9Learn(Player player) { player.getPersistentDataContainer().set(node9AbilityKey, PersistentDataType.BOOLEAN, true); }
+    public void node9Unlearn(Player player) { player.getPersistentDataContainer().set(node9AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node9Status(Player player, Node node) { node.locked = !(findNode(player, 6).aquired || findNode(player, 8).aquired); }
     public void node9CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 

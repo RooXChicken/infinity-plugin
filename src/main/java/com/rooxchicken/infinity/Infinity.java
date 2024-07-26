@@ -42,6 +42,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -52,6 +53,8 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.google.common.base.Predicate;
 import com.rooxchicken.infinity.Abilities.Ability;
 import com.rooxchicken.infinity.Abilities.HealthClass;
@@ -169,6 +172,12 @@ public class Infinity extends JavaPlugin implements Listener
     {
 		e.getCommands().removeAll(blockedCommands);
 	}
+
+    @EventHandler
+    public void unregisterProtocollib(PluginDisableEvent event)
+    {
+        ProtocolLibrary.getProtocolManager().removePacketListeners(this);
+    }
     
     @EventHandler
     private void preventKick(PlayerKickEvent event)
