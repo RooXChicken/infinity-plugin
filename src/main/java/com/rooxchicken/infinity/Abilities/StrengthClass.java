@@ -72,7 +72,7 @@ public class StrengthClass extends Ability
     {
         super(_plugin);
         plugin = _plugin;
-        
+    
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
         playerCompassMap = new HashMap<Player, ItemStack>();
         playerTrackMap = new HashMap<Player, Player>();
@@ -92,7 +92,7 @@ public class StrengthClass extends Ability
         nodeList.add(new Node(_plugin, "strength", "n", "n", 0, 40, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", 0, 15, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "icons/11", "Immune to Weakness", 0, 10, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
-        nodeList.add(new Node(_plugin, "strength", "icons/30", "Every 8 crits does 1.5x damage", 0, -20, 2, true, false, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/30", "Every 6 crits does 1.2x damage", 0, -20, 2, true, false, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "uarrow", "n", 0, -35, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "icons/27", "Give every player in a 20 block radius glowing (COOLDOWN: 1m)", 0, -50, 3, true, false, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
 
@@ -115,8 +115,8 @@ public class StrengthClass extends Ability
         nodeList.add(new Node(_plugin, "strength", "uarrow", "n", 40, 20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", 40, 10, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "strength", "icons/7", "Right click a compass to track a specified player (COOLDOWN: 30m)", 75, 40, 8, true, true, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
-        nodeList.add(new Node(_plugin, "strength", "icons/26", "The lower your health, the more damage you deal (CAP: 2x damage at 1hp)", 40, 5, 9, true, true, this::node9Learn, this::node9Unlearn, this::node9Status, this::node9CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/7", "Right click a compass to Track a specified player (COOLDOWN: 30m)", 75, 40, 8, true, true, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/26", "The lower your health, the more damage you deal (CAP: 2x damage at 1.0hp)", 40, 5, 9, true, true, this::node9Learn, this::node9Unlearn, this::node9Status, this::node9CanUnlearn));
         
         ability2CountKey = new NamespacedKey(_plugin, "strength_critCount");
         ability3CooldownKey = new NamespacedKey(_plugin, "strength_glowCD");
@@ -311,7 +311,7 @@ public class StrengthClass extends Ability
                 data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
 
             int crits = data.get(ability2CountKey, PersistentDataType.INTEGER) + 1;
-            if(crits > 3)
+            if(crits > 5)
             {
                 event.setDamage(event.getDamage() * 1.2);
 

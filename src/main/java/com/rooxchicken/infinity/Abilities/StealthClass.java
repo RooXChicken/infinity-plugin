@@ -15,6 +15,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -22,6 +23,7 @@ import org.bukkit.entity.Firework;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Warden;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
@@ -88,8 +90,8 @@ public class StealthClass extends Ability
         super(_plugin);
         plugin = _plugin;
         
-        nodeList = new ArrayList<Node>();
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
+        nodeList = new ArrayList<Node>();
 
         protocolManager = ProtocolLibrary.getProtocolManager();
 
@@ -121,7 +123,7 @@ public class StealthClass extends Ability
         header = "2_srt_Stealth_5_0.2_0.2_0.2_true_1.0";
 
         nodeList.add(new Node(_plugin, "stealth", "n", "n", 0, 41, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "stealth", "icons/5", "Footsteps become Silent", 0, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
+        nodeList.add(new Node(_plugin, "stealth", "icons/5", "Footsteps become Silent (NOT IMPLEMENTED YET)", 0, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
         nodeList.add(new Node(_plugin, "stealth", "lline", "n", -15, 36, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "stealth", "luarrow", "n", -15, 36, -1, false, true, null, null, null, null));
         //nodeList.add(new Node(_plugin, "stealth", "lline", "n", -20, 31, -1, false, true, null, null, null, null));
@@ -130,7 +132,7 @@ public class StealthClass extends Ability
         //nodeList.add(new Node(_plugin, "stealth", "rline", "n", 18, 31, -1, false, true, null, null, null, null));
 
         nodeList.add(new Node(_plugin, "stealth", "n", "n", -25, 19, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "stealth", "icons/46", "Sneak Speed increased", -25, 20, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
+        nodeList.add(new Node(_plugin, "stealth", "icons/46", "Sneak speed increased", -25, 20, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
         nodeList.add(new Node(_plugin, "stealth", "n", "n", -25, 0, -1, false, false, null, null, null, null));
 
         nodeList.add(new Node(_plugin, "stealth", "n", "n", 25, 19, -1, false, true, null, null, null, null));
@@ -240,6 +242,12 @@ public class StealthClass extends Ability
             }
         }
 
+        if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            for(Warden warden : player.getWorld().getEntitiesByClass(Warden.class))
+                warden.clearAnger(player);
+        }
+
         if(data.has(node1AbilityKey, PersistentDataType.BOOLEAN) && data.get(node1AbilityKey, PersistentDataType.BOOLEAN))
         {
             if(player.isSneaking())
@@ -247,7 +255,8 @@ public class StealthClass extends Ability
                 if(!playerSpeedMap.containsKey(player))
                     playerSpeedMap.put(player, player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).getBaseValue());
 
-                player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(playerSpeedMap.get(player) * 2.4);
+                if(player.getInventory().getLeggings() == null || !player.getInventory().getLeggings().getEnchantments().containsKey(Enchantment.SWIFT_SNEAK))
+                    player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(playerSpeedMap.get(player) * 2.4);
             }
             else if(playerSpeedMap.containsKey(player))
             {
@@ -315,8 +324,8 @@ public class StealthClass extends Ability
             if(Math.abs(difference) < 60)
             {
                 event.setDamage(event.getDamage() + 0.5);
-                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 60, 0.4, 0.5, 0.4, new Particle.DustOptions(Color.GRAY, 1.0f));
-                entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.6f);
+                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 30, 0.3, 0.4, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
+                //entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.6f);
             }
         }
     }
@@ -332,6 +341,18 @@ public class StealthClass extends Ability
         if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN))
             event.setCancelled(true);
     }
+
+    // @EventHandler
+    // public void preventTargetting( event)
+    // {
+    //     if(!(event.getTarget() instanceof Player))
+    //         return;
+
+    //     Player target = (Player)event.getTarget();
+    //     PersistentDataContainer data = target.getPersistentDataContainer();
+    //     if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN))
+    //         event.setCancelled(true);
+    // }
 
     // @EventHandler
     // private void replacePoison(EntityPotionEffectEvent event)
