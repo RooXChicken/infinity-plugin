@@ -72,8 +72,12 @@ public class LuckClass extends Ability
     private Infinity plugin;
     public int type = -1;
 
+    private HashMap<Player, Integer> playerSneaktimeMap;
     private HashMap<Player, PotionEffect> playerEffectMap;
+    private HashMap<Player, Boolean> playerSwapMap;
     
+    private NamespacedKey ability7CooldownKey;
+
     private NamespacedKey node0AbilityKey;
     private NamespacedKey node1AbilityKey;
     private NamespacedKey node2AbilityKey;
@@ -95,6 +99,8 @@ public class LuckClass extends Ability
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
         playerProjectileMap = new HashMap<Player, ItemStack>();
         playerEffectMap = new HashMap<Player, PotionEffect>();
+        playerSwapMap = new HashMap<Player, Boolean>();
+        playerSneaktimeMap = new HashMap<Player, Integer>();
         doubleBlockList = new ArrayList<Material>();
 
         doubleBlockList.add(Material.RAW_IRON);
@@ -155,8 +161,10 @@ public class LuckClass extends Ability
         nodeList.add(new Node(_plugin, "luck", "uarrow", "n", -20, -20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "luck", "n", "n", -20, -30, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "luck", "icons/55", "Swap places with the entity you attack (COOLDOWN: 3m)", -50, -5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
+        nodeList.add(new Node(_plugin, "luck", "icons/55", "Swap places with the entity you attack (COOLDOWN: 3m, TOGGLE WITH FAST SHIFT -> UNSHIFT)", -50, -5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
         nodeList.add(new Node(_plugin, "luck", "icons/8", "7% chance to Evade an attack", -20, -35, 8, true, true, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
+
+        ability7CooldownKey = new NamespacedKey(_plugin, "luck_ability7CD");
 
         node0AbilityKey = new NamespacedKey(_plugin, "luck_0Ability");
         node1AbilityKey = new NamespacedKey(_plugin, "luck_1Ability");
@@ -342,6 +350,30 @@ public class LuckClass extends Ability
         }
     }
 
+    @EventHandler
+    public void swapPlaces(EntityDamageByEntityEvent event)
+    {
+        if(!(event.getDamager() instanceof Player))
+            return;
+
+        Player player = (Player)event.getDamager();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(!playerSwapMap.containsKey(player))
+            playerSwapMap.put(player, false);
+        
+        if(data.has(ability7CooldownKey, PersistentDataType.INTEGER) && data.get(ability7CooldownKey, PersistentDataType.INTEGER) <= 0 && playerSwapMap.get(player))
+        {
+            Location playerLoc = player.getLocation().clone();
+            Location entityLoc = event.getEntity().getLocation().clone();
+
+            event.getEntity().teleport(playerLoc);
+            player.teleport(entityLoc);
+
+            data.set(ability7CooldownKey, PersistentDataType.INTEGER, 3*60*20);
+        }
+    }
+
     public String tickAbilities(Player player)
     {
         String bar = "";
@@ -358,6 +390,51 @@ public class LuckClass extends Ability
                 if(player != entity && player.getLocation().clone().add(0,1,0).distance(entity.getLocation()) < 1.8)
                     entity.setVelocity(entity.getVelocity().multiply(-1));
             }
+        }
+
+        if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(!data.has(ability7CooldownKey, PersistentDataType.INTEGER))
+                data.set(ability7CooldownKey, PersistentDataType.INTEGER, 0);
+
+            int cooldown = data.get(ability7CooldownKey, PersistentDataType.INTEGER) - 1;
+            data.set(ability7CooldownKey, PersistentDataType.INTEGER, cooldown);
+
+            if(player.isSneaking())
+            {
+                if(!playerSneaktimeMap.containsKey(player))
+                    playerSneaktimeMap.put(player, 0);
+
+                int time = playerSneaktimeMap.get(player) + 1;
+
+                playerSneaktimeMap.remove(player);
+                playerSneaktimeMap.put(player, time);
+            }
+            else
+            {
+                if(playerSneaktimeMap.containsKey(player) && playerSneaktimeMap.get(player) < 3)
+                {
+                    boolean swap = false;
+                    if(playerSwapMap.containsKey(player))
+                    {
+                        swap = playerSwapMap.get(player);
+                        playerSwapMap.remove(player);
+                    }
+                    playerSwapMap.put(player, !swap);
+                }
+
+                playerSneaktimeMap.remove(player);
+            }
+
+            if(!playerSwapMap.containsKey(player))
+                playerSwapMap.put(player, false);
+
+            if(playerSwapMap.get(player))
+                bar += "↔ " + ((cooldown < 0) ? "READY " : (cooldown/20 + "s "));
+            else
+                bar += "↔ INACTIVE ";
+
+            
         }
         //bar += "↔";
 
