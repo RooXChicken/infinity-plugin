@@ -123,7 +123,7 @@ public class StealthClass extends Ability
         header = "2_srt_Stealth_5_0.2_0.2_0.2_true_1.0";
 
         nodeList.add(new Node(_plugin, "stealth", "n", "n", 0, 41, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "stealth", "icons/5", "Footsteps become Silent (NOT IMPLEMENTED YET)", 0, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
+        nodeList.add(new Node(_plugin, "stealth", "icons/5", "Footsteps become Silent", 0, 40, 0, true, false, this::node0Learn, this::node0Unlearn, this::node0Status, this::node0CanUnlearn));
         nodeList.add(new Node(_plugin, "stealth", "lline", "n", -15, 36, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "stealth", "luarrow", "n", -15, 36, -1, false, true, null, null, null, null));
         //nodeList.add(new Node(_plugin, "stealth", "lline", "n", -20, 31, -1, false, true, null, null, null, null));
@@ -264,6 +264,11 @@ public class StealthClass extends Ability
                 playerSpeedMap.remove(player);
             }
         }
+
+        if(data.has(node0AbilityKey, PersistentDataType.BOOLEAN) && data.get(node0AbilityKey, PersistentDataType.BOOLEAN))
+            Library.sendGlobalData("1_" + player.getName() + "_1");
+        else
+            Library.sendGlobalData("1_" + player.getName() + "_0");
 
         return bar;
     }

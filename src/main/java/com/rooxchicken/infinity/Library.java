@@ -3,6 +3,7 @@ package com.rooxchicken.infinity;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,6 +34,12 @@ public class Library
     public static void sendPlayerData(Player player, String data)
     {
         player.sendMessage("infb63_" + data);
+    }
+
+    public static void sendGlobalData(String data)
+    {
+        for(Player player : Bukkit.getOnlinePlayers())
+            player.sendMessage("infb63_" + data);
     }
 
     public static void checkHasPoints(Player player)
