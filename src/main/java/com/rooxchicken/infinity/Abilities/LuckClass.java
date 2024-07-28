@@ -149,9 +149,8 @@ public class LuckClass extends Ability
         nodeList.add(new Node(_plugin, "luck", "uarrow", "n", 20, -20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "luck", "n", "n", 20, -30, -1, false, false, null, null, null, null));
         
-        nodeList.add(new Node(_plugin, "luck", "icons/53", "All entities bounce off of you", 50, -5, 5, true, true, this::node5Learn, this::node5Unlearn, this::node5Status, this::node5CanUnlearn));
+        nodeList.add(new Node(_plugin, "luck", "icons/53", "All projectiles slow near you (JJK Infinity)", 50, -5, 5, true, true, this::node5Learn, this::node5Unlearn, this::node5Status, this::node5CanUnlearn));
         nodeList.add(new Node(_plugin, "luck", "icons/31", "25% chance for newly gained Potion effects to be doubled in length", 20, -35, 6, true, true, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
-
 
         nodeList.add(new Node(_plugin, "luck", "n", "n", -20, -4, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "luck", "icons/38", "Gain XP 1.2x faster", -20, -5, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
@@ -161,7 +160,7 @@ public class LuckClass extends Ability
         nodeList.add(new Node(_plugin, "luck", "uarrow", "n", -20, -20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "luck", "n", "n", -20, -30, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "luck", "icons/55", "Swap places with the entity you attack (COOLDOWN: 3m, TOGGLE WITH FAST SHIFT -> UNSHIFT)", -50, -5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
+        nodeList.add(new Node(_plugin, "luck", "icons/55", "Swap places with the entity you attack (COOLDOWN: 3m, TOGGLE WITH QUICK SHIFT -> UNSHIFT)", -50, -5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
         nodeList.add(new Node(_plugin, "luck", "icons/8", "7% chance to Evade an attack", -20, -35, 8, true, true, this::node8Learn, this::node8Unlearn, this::node8Status, this::node8CanUnlearn));
 
         ability7CooldownKey = new NamespacedKey(_plugin, "luck_ability7CD");
@@ -383,12 +382,17 @@ public class LuckClass extends Ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.LUCK, 2, 2));
 
         if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
-        {
-            for(Object o : Library.getNearbyEntities(player.getLocation(), 1))
+        {   
+            for(Object _e : Library.getNearbyEntities(player.getLocation(), 2))
             {
-                Entity entity = (Entity)o;
-                if(player != entity && player.getLocation().clone().add(0,1,0).distance(entity.getLocation()) < 1.8)
-                    entity.setVelocity(entity.getVelocity().multiply(-1));
+                Entity e = (Entity)_e;
+                if(e != player && e instanceof Projectile && ((Projectile)e).getShooter() != player)
+                {
+                    double distance = Library.ClampD(player.getLocation().distance(e.getLocation()), 0, 2)*4;
+                    e.setVelocity(e.getVelocity().multiply(Math.pow(2.0, -(8-distance))));
+
+                    //player.getWorld().spawnParticle(Particle.REDSTONE, e.getLocation(), 1, 0, 0, 0, new Particle.DustOptions(Color.WHITE, (float)(3-distance/4)));
+                }
             }
         }
 

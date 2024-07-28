@@ -67,7 +67,7 @@ public class SpeedClass extends Ability
         nodeList.add(new Node(_plugin, "speed", "n", "n", 20, 40, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "larrow", "n", 0, 40, -1, false, false, null, null, null, null));
 
-        nodeList.add(new Node(_plugin, "speed", "icons/1", "Double Jump (COOLDOWN: 30s)", -20, 40, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/1", "Double Jump (COOLDOWN: 30s, DOUBLE-TAP JUMP)", -20, 40, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
         nodeList.add(new Node(_plugin, "speed", "larrow", "n", -40, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -60, 40, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", -20, 40, -1, false, true, null, null, null, null));

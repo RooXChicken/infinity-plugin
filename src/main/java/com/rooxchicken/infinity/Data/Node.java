@@ -81,7 +81,7 @@ public class Node
     {
         checkStatus(player);
 
-        return "2_" + icon + "_" + x + "_" + y + "_" + description + " CI: " + clickIndex + "_" + drawTexture + "_" + skip + "_" + aquired + "_" + locked + "_" + clickIndex;
+        return "2_" + icon + "_" + x + "_" + y + "_" + description + /*" CI: " + clickIndex +*/ "_" + drawTexture + "_" + skip + "_" + aquired + "_" + locked + "_" + clickIndex;
     }
 
     public void action(Player player, int mouse)

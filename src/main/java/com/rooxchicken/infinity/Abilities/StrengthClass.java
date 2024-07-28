@@ -94,7 +94,7 @@ public class StrengthClass extends Ability
         nodeList.add(new Node(_plugin, "strength", "icons/11", "Immune to Weakness", 0, 10, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "icons/30", "Every 6 crits does 1.2x damage", 0, -20, 2, true, false, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "uarrow", "n", 0, -35, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "strength", "icons/27", "Give every player in a 20 block radius glowing (COOLDOWN: 1m)", 0, -50, 3, true, false, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/27", "Give every player in a 20 block radius glowing (COOLDOWN: 1m, SHIFT+OFFHAND)", 0, -50, 3, true, false, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
 
         nodeList.add(new Node(_plugin, "strength", "n", "n", -40, 41, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "icons/44", "+0.25 attack damage", -40, 40, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
