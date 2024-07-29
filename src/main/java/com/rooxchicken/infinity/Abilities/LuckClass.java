@@ -41,6 +41,7 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -201,11 +202,10 @@ public class LuckClass extends Ability
         return null;
     }
 
-    // public void resetCooldown(Player player)
-    // {
-    //     player.getPersistentDataContainer().set(ability8CooldownKey, PersistentDataType.INTEGER, 0);
-    //     player.getPersistentDataContainer().set(ability3CooldownKey, PersistentDataType.INTEGER, 0);
-    // }
+    public void resetCooldown(Player player)
+    {
+        player.getPersistentDataContainer().set(ability7CooldownKey, PersistentDataType.INTEGER, 0);
+    }
 
     @EventHandler
     private void doublePotionLength(EntityPotionEffectEvent event)
@@ -263,8 +263,11 @@ public class LuckClass extends Ability
         if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.25)
         {
             ItemStack item = playerProjectileMap.get(player);
-            item.setAmount(item.getAmount() + 1);
-            player.updateInventory();
+            if(item != null)
+            {
+                item.setAmount(item.getAmount() + 1);
+                player.updateInventory();
+            }
         }
     }
 
@@ -279,7 +282,18 @@ public class LuckClass extends Ability
             if(playerProjectileMap.containsKey(player))
                 playerProjectileMap.remove(player);
             
-            playerProjectileMap.put(player, event.getItem());
+            if(!event.getItem().getType().equals(Material.TRIDENT) && !event.getItem().getType().equals(Material.BOW))
+                playerProjectileMap.put(player, event.getItem());
+
+            if(event.getItem().getType().equals(Material.BOW))
+            {
+                for(ItemStack item : player.getInventory().getContents())
+                    if(item != null && item.getType().toString().toLowerCase().contains("arrow"))
+                    {
+                        playerProjectileMap.put(player, item);
+                        return;
+                    }
+            }
         }
     }
 
@@ -302,10 +316,22 @@ public class LuckClass extends Ability
         Player player = event.getEntity().getKiller();
         PersistentDataContainer data = player.getPersistentDataContainer();
 
+        ArrayList<ItemStack> excluded = new ArrayList<ItemStack>();
+        EntityEquipment equipment = event.getEntity().getEquipment();
+        excluded.add(equipment.getHelmet());
+        excluded.add(equipment.getChestplate());
+        excluded.add(equipment.getLeggings());
+        excluded.add(equipment.getBoots());
+        excluded.add(equipment.getItemInMainHand());
+        excluded.add(equipment.getItemInOffHand());
+
         if(data.has(node2AbilityKey, PersistentDataType.BOOLEAN) && data.get(node2AbilityKey, PersistentDataType.BOOLEAN))
         {
             for(ItemStack item : event.getDrops())
-                item.setAmount(item.getAmount() * 2);
+            {
+                if(!excluded.contains(item))
+                    item.setAmount(item.getAmount() * 2);
+            }
         }
     }
 
@@ -350,12 +376,35 @@ public class LuckClass extends Ability
     }
 
     @EventHandler
-    public void swapPlaces(EntityDamageByEntityEvent event)
+    public void preventProjectileDamage(EntityDamageByEntityEvent event)
     {
-        if(!(event.getDamager() instanceof Player))
+        if(!(event.getEntity() instanceof Player))
             return;
 
-        Player player = (Player)event.getDamager();
+        Player player = (Player)event.getEntity();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            if(event.getDamager() instanceof Projectile)
+                event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    public void swapPlaces(EntityDamageByEntityEvent event)
+    {
+        Player player = null;
+        if(event.getDamager() instanceof Player)
+            player = (Player)event.getDamager();
+
+        if(event.getDamager() instanceof Projectile)
+            if(((Projectile)event.getDamager()).getShooter() instanceof Player)
+                player = (Player)((Projectile)event.getDamager()).getShooter();
+
+        if(player == null)
+            return;
+
         PersistentDataContainer data = player.getPersistentDataContainer();
 
         if(!playerSwapMap.containsKey(player))

@@ -92,9 +92,9 @@ public class StrengthClass extends Ability
         nodeList.add(new Node(_plugin, "strength", "n", "n", 0, 40, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "n", "n", 0, 15, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "icons/11", "Immune to Weakness", 0, 10, 1, true, false, this::node1Learn, this::node1Unlearn, this::node1Status, this::node1CanUnlearn));
-        nodeList.add(new Node(_plugin, "strength", "icons/30", "Every 6 crits does 1.2x damage", 0, -20, 2, true, false, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/27", "Give every player in a 20 block radius glowing (COOLDOWN: 1m, SHIFT+OFFHAND)", 0, -20, 3, true, false, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
         nodeList.add(new Node(_plugin, "strength", "uarrow", "n", 0, -35, -1, false, false, null, null, null, null));
-        nodeList.add(new Node(_plugin, "strength", "icons/27", "Give every player in a 20 block radius glowing (COOLDOWN: 1m, SHIFT+OFFHAND)", 0, -50, 3, true, false, this::node3Learn, this::node3Unlearn, this::node3Status, this::node3CanUnlearn));
+        nodeList.add(new Node(_plugin, "strength", "icons/30", "Every 6 crits does 1.2x damage", 0, -50, 2, true, false, this::node2Learn, this::node2Unlearn, this::node2Status, this::node2CanUnlearn));
 
         nodeList.add(new Node(_plugin, "strength", "n", "n", -40, 41, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "strength", "icons/44", "+0.25 attack damage", -40, 40, 4, true, false, this::node4Learn, this::node4Unlearn, this::node4Status, this::node4CanUnlearn));
@@ -391,21 +391,21 @@ public class StrengthClass extends Ability
     public void node1Learn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node1Unlearn(Player player) { player.getPersistentDataContainer().set(node1AbilityKey, PersistentDataType.BOOLEAN, false); }
     public void node1Status(Player player, Node node) { if(findNode(player, 0).aquired) node.locked = false; else node.locked = true; }
-    public void node1CanUnlearn(Player player, Node node) { if(!findNode(player, 2).aquired) unlearnNode(player, node); }
+    public void node1CanUnlearn(Player player, Node node) { if(!findNode(player, 3).aquired) unlearnNode(player, node); }
 
     public void node2Learn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node2Unlearn(Player player) { player.getPersistentDataContainer().set(node2AbilityKey, PersistentDataType.BOOLEAN, false); }
-    public void node2Status(Player player, Node node) { if(findNode(player, 1).aquired) node.locked = false; else node.locked = true; }
-    public void node2CanUnlearn(Player player, Node node) { if(!findNode(player, 3).aquired) unlearnNode(player, node); }
+    public void node2Status(Player player, Node node) { if(findNode(player, 3).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) node.locked = false; else node.locked = true; }
+    public void node2CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
     
     public void node3Learn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node3Unlearn(Player player) { player.getPersistentDataContainer().set(node3AbilityKey, PersistentDataType.BOOLEAN, false); }
-    public void node3Status(Player player, Node node) { if(findNode(player, 2).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) node.locked = false; else node.locked = true; }
-    public void node3CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
+    public void node3Status(Player player, Node node) { if(findNode(player, 1).aquired) node.locked = false; else node.locked = true; }
+    public void node3CanUnlearn(Player player, Node node) { if(!findNode(player, 2).aquired) unlearnNode(player, node); }
 
     public void node4Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.5); }
     public void node4Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.25); }
-    public void node4Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 7).aquired && !findNode(player, 3).aquired) node.locked = false; else node.locked = true; }
+    public void node4Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 7).aquired && !findNode(player, 2).aquired) node.locked = false; else node.locked = true; }
     public void node4CanUnlearn(Player player, Node node) { if(!findNode(player, 5).aquired && !findNode(player, 6).aquired) unlearnNode(player, node); }
 
     public void node5Learn(Player player) { player.getPersistentDataContainer().set(node5AbilityKey, PersistentDataType.BOOLEAN, true); }
@@ -420,7 +420,7 @@ public class StrengthClass extends Ability
 
     public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); }
     public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); }
-    public void node7Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 4).aquired && !findNode(player, 3).aquired) node.locked = false; else node.locked = true; }
+    public void node7Status(Player player, Node node) { if(findNode(player, 0).aquired && !findNode(player, 4).aquired && !findNode(player, 2).aquired) node.locked = false; else node.locked = true; }
     public void node7CanUnlearn(Player player, Node node) { if(!findNode(player, 8).aquired && !findNode(player, 9).aquired)unlearnNode(player, node); }
 
     public void node8Learn(Player player) { player.getPersistentDataContainer().set(node8AbilityKey, PersistentDataType.BOOLEAN, true); }

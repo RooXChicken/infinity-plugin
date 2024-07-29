@@ -101,13 +101,13 @@ public class SpeedClass extends Ability
         nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 39, -1, false, true, null, null, null, null));
         
         
-        nodeList.add(new Node(_plugin, "speed", "icons/4", "+6% attack speed", 60, 40, 6, true, false, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/4", "+3% attack speed", 60, 40, 6, true, false, this::node6Learn, this::node6Unlearn, this::node6Status, this::node6CanUnlearn));
         nodeList.add(new Node(_plugin, "speed", "uarrow", "n", 60, 20, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "n", "n", 60, 5, -1, false, false, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "lline", "n", 35, 15, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "lline", "n", 40, 20, -1, false, true, null, null, null, null));
         nodeList.add(new Node(_plugin, "speed", "lline", "n", 45, 25, -1, false, true, null, null, null, null));
-        nodeList.add(new Node(_plugin, "speed", "icons/39", "+3% attack speed", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
+        nodeList.add(new Node(_plugin, "speed", "icons/39", "+6% attack speed", 60, 5, 7, true, true, this::node7Learn, this::node7Unlearn, this::node7Status, this::node7CanUnlearn));
         
         jumps = new ArrayList<Player>();
 
@@ -277,13 +277,13 @@ public class SpeedClass extends Ability
     public void node5Status(Player player, Node node) { if(findNode(player, "1").aquired && !findNode(player, "20").aquired) node.locked = false; else node.locked = true; }
     public void node5CanUnlearn(Player player, Node node) { if(!findNode(player, "19").aquired) unlearnNode(player, node); }
 
-    public void node6Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.24f); }
+    public void node6Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.12f); }
     public void node6Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4f); }
     public void node6Status(Player player, Node node) { if(findNode(player, "28").aquired && !findNode(player, "1").aquired) node.locked = false; else node.locked = true; }
     public void node6CanUnlearn(Player player, Node node) { if(!findNode(player, "39").aquired) unlearnNode(player, node); }
 
     public void node7Learn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, true); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.36f); }
-    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.24f); }
+    public void node7Unlearn(Player player) { player.getPersistentDataContainer().set(node7AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.12f); }
     public void node7Status(Player player, Node node) { if(!findNode(player, "42").aquired && findNode(player, "4").aquired) node.locked = false; else node.locked = true; }
     public void node7CanUnlearn(Player player, Node node) { unlearnNode(player, node); }
 
