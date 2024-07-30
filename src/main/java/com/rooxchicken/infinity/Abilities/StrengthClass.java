@@ -54,6 +54,7 @@ public class StrengthClass extends Ability
     public NamespacedKey ability8CooldownKey;
     public NamespacedKey ability8TimerKey;
     
+    public NamespacedKey node0AbilityKey;
     private NamespacedKey node1AbilityKey;
     private NamespacedKey node2AbilityKey;
     private NamespacedKey node3AbilityKey;
@@ -123,6 +124,7 @@ public class StrengthClass extends Ability
         ability8CooldownKey = new NamespacedKey(_plugin, "strength_compassCD");
         ability8TimerKey = new NamespacedKey(_plugin, "strength_compassTimer");
 
+        node0AbilityKey = new NamespacedKey(_plugin, "strength_0Ability");
         node1AbilityKey = new NamespacedKey(_plugin, "strength_1Ability");
         node2AbilityKey = new NamespacedKey(_plugin, "strength_2Ability");
         node3AbilityKey = new NamespacedKey(_plugin, "strength_3Ability");
@@ -383,8 +385,8 @@ public class StrengthClass extends Ability
         }
     }
 
-    public void node0Learn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.25); }
-    public void node0Unlearn(Player player) { player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.0); }
+    public void node0Learn(Player player) { player.getPersistentDataContainer().set(node0AbilityKey, PersistentDataType.BOOLEAN, true); player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.25); }
+    public void node0Unlearn(Player player) { player.getPersistentDataContainer().set(node0AbilityKey, PersistentDataType.BOOLEAN, false); player.getAttribute(Attribute.GENERIC_ATTACK_DAMAGE).setBaseValue(1.0); }
     public void node0Status(Player player, Node node) { node.locked = false; }
     public void node0CanUnlearn(Player player, Node node) { if(!findNode(player, 1).aquired && !findNode(player, 4).aquired && !findNode(player, 7).aquired) unlearnNode(player, node); }
 

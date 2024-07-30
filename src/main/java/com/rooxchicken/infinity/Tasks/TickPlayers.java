@@ -27,10 +27,11 @@ public class TickPlayers extends Task
         for(Player player : Bukkit.getOnlinePlayers())
         {
             String bar = "";
-            bar += plugin.speed.tickAbilities(player);
             bar += plugin.strength.tickAbilities(player);
-            bar += plugin.stealth.tickAbilities(player);
+            bar += plugin.speed.tickAbilities(player);
+            bar += plugin.health.tickAbilities(player);
             bar += plugin.luck.tickAbilities(player);
+            bar += plugin.stealth.tickAbilities(player);
 
             if(!bar.equals(""))
                 player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(bar));

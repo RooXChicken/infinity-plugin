@@ -66,6 +66,10 @@ public class NodeAction implements CommandExecutor
                 plugin.stealth.findNode(player, Integer.parseInt(args[1])).action(player, Integer.parseInt(args[2]));
                 plugin.stealth.sendNodes(player, false);
             break;
+            case 6:
+                plugin.health.findNode(player, Integer.parseInt(args[1])).action(player, Integer.parseInt(args[2]));
+                plugin.health.sendNodes(player, false);
+            break;
         }
 
         return true;

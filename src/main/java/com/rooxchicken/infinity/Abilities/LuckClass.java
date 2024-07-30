@@ -79,7 +79,7 @@ public class LuckClass extends Ability
     
     private NamespacedKey ability7CooldownKey;
 
-    private NamespacedKey node0AbilityKey;
+    public NamespacedKey node0AbilityKey;
     private NamespacedKey node1AbilityKey;
     private NamespacedKey node2AbilityKey;
     private NamespacedKey node3AbilityKey;
