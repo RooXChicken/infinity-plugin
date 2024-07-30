@@ -165,6 +165,12 @@ public class Infinity extends JavaPlugin implements Listener
     }
 
     @EventHandler
+    private void registerPlayer(PlayerJoinEvent e)
+    {
+        Library.sendPlayerData(e.getPlayer(), "0");
+    }
+
+    @EventHandler
     private void unRegisterPlayer(PlayerQuitEvent e)
     {
         hasMod.remove(e.getPlayer());
@@ -181,13 +187,7 @@ public class Infinity extends JavaPlugin implements Listener
     {
         ProtocolLibrary.getProtocolManager().removePacketListeners(this);
     }
-    
-    @EventHandler
-    private void preventKick(PlayerKickEvent event)
-    {
-        if(event.getReason().equals("Kicked for spamming"))
-            event.setCancelled(true);
-    }
+
 
     public void verifyMod(Player player)
     {
