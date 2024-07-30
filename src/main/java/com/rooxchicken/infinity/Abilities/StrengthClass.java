@@ -176,7 +176,7 @@ public class StrengthClass extends Ability
             if(player.hasPotionEffect(PotionEffectType.WEAKNESS))
             {
                 player.removePotionEffect(PotionEffectType.WEAKNESS);
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.RED, 1.0f));
+                player.getWorld().spawnParticle(Particle.DUST, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.RED, 1.0f));
                 player.getWorld().playSound(player.getLocation(), Sound.BLOCK_FIRE_EXTINGUISH, 1.0f, 1.0f);
             }
         }
@@ -224,7 +224,7 @@ public class StrengthClass extends Ability
         }
 
         if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
-            player.addPotionEffect(new PotionEffect(PotionEffectType.INCREASE_DAMAGE, 2, 0));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.STRENGTH, 2, 0));
 
         return bar;
     }
@@ -244,7 +244,7 @@ public class StrengthClass extends Ability
         if(data.get(ability3CooldownKey, PersistentDataType.INTEGER) <= 0)
         {
             event.setCancelled(true);
-            player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation(), 600, 10, 10, 10, new Particle.DustOptions(Color.RED, 0.8f));
+            player.getWorld().spawnParticle(Particle.DUST, player.getLocation(), 600, 10, 10, 10, new Particle.DustOptions(Color.RED, 0.8f));
 
             for(Object o : Library.getNearbyEntities(player.getLocation(), 20))
             {
@@ -318,13 +318,13 @@ public class StrengthClass extends Ability
                 event.setDamage(event.getDamage() * 1.2);
 
                 entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.7f);
-                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.MAROON, 0.8f));
+                entity.getWorld().spawnParticle(Particle.DUST, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.MAROON, 0.8f));
 
                 data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
             }
             else
             {
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.RED, 0.8f));
+                player.getWorld().spawnParticle(Particle.DUST, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.RED, 0.8f));
                 data.set(ability2CountKey, PersistentDataType.INTEGER, crits);
             }
         }
@@ -380,7 +380,7 @@ public class StrengthClass extends Ability
                 }
 
                 victim.getWorld().playSound(victim.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.4f, 1.0f);
-                victim.getWorld().spawnParticle(Particle.REDSTONE, victim.getLocation().clone().add(0,1,0), 100, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
+                victim.getWorld().spawnParticle(Particle.DUST, victim.getLocation().clone().add(0,1,0), 100, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
             }
         }
     }

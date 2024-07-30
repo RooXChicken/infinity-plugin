@@ -172,13 +172,13 @@ public class SpeedClass extends Ability
             {
                 launch.setPitch(-5);
                 player.setVelocity(launch.getDirection().multiply(1.6));
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 175, 0.4, 0.7, 0.4, new Particle.DustOptions(Color.TEAL, 1f));
+                player.getWorld().spawnParticle(Particle.DUST, player.getLocation().clone().add(0,1,0), 175, 0.4, 0.7, 0.4, new Particle.DustOptions(Color.TEAL, 1f));
             }
             else
             {
                 launch.setPitch(-70);
                 player.setVelocity(launch.getDirection());
-                player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().subtract(0,0.5,0), 175, 1, 0.1, 1, new Particle.DustOptions(Color.TEAL, 1f));
+                player.getWorld().spawnParticle(Particle.DUST, player.getLocation().clone().subtract(0,0.5,0), 175, 1, 0.1, 1, new Particle.DustOptions(Color.TEAL, 1f));
             
                 if(!jumps.contains(player))
                     jumps.add(player);
@@ -218,7 +218,7 @@ public class SpeedClass extends Ability
             player.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, 2, 0));
 
         if(data.has(node5AbilityKey, PersistentDataType.BOOLEAN) && data.get(node5AbilityKey, PersistentDataType.BOOLEAN))
-            player.addPotionEffect(new PotionEffect(PotionEffectType.FAST_DIGGING, 2, 1));
+            player.addPotionEffect(new PotionEffect(PotionEffectType.HASTE, 2, 1));
 
         //player.getAttribute(Attribute.GENERIC_MOVEMENT_SPEED).setBaseValue(0.1f * data.get(attackSpeedKey, null));
 
@@ -243,7 +243,7 @@ public class SpeedClass extends Ability
 
         if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.1)
         {
-            entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOW, 100, 1));
+            entity.addPotionEffect(new PotionEffect(PotionEffectType.SLOWNESS, 100, 1));
         }
     }
 

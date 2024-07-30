@@ -102,12 +102,12 @@ public class HealthClass extends Ability
         badGoodPotionMap = new HashMap<PotionEffectType, PotionEffectType>();
         nodeList = new ArrayList<Node>();
 
-        badGoodPotionMap.put(PotionEffectType.SLOW, PotionEffectType.SPEED);
-        badGoodPotionMap.put(PotionEffectType.WEAKNESS, PotionEffectType.INCREASE_DAMAGE);
-        badGoodPotionMap.put(PotionEffectType.HARM, PotionEffectType.HEAL);
+        badGoodPotionMap.put(PotionEffectType.SLOWNESS, PotionEffectType.SPEED);
+        badGoodPotionMap.put(PotionEffectType.WEAKNESS, PotionEffectType.STRENGTH);
+        badGoodPotionMap.put(PotionEffectType.INSTANT_DAMAGE, PotionEffectType.INSTANT_HEALTH);
         badGoodPotionMap.put(PotionEffectType.POISON, PotionEffectType.REGENERATION);
         badGoodPotionMap.put(PotionEffectType.BLINDNESS, PotionEffectType.NIGHT_VISION);
-        badGoodPotionMap.put(PotionEffectType.SLOW_DIGGING, PotionEffectType.FAST_DIGGING);
+        badGoodPotionMap.put(PotionEffectType.MINING_FATIGUE, PotionEffectType.HASTE);
         badGoodPotionMap.put(PotionEffectType.HUNGER, PotionEffectType.SATURATION);
         badGoodPotionMap.put(PotionEffectType.WITHER, PotionEffectType.REGENERATION);
         badGoodPotionMap.put(PotionEffectType.UNLUCK, PotionEffectType.LUCK);
@@ -236,7 +236,7 @@ public class HealthClass extends Ability
 
             if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN))
             {
-                if(badGoodPotionMap.containsKey(potion.getType()) || potion.getType().equals(PotionEffectType.CONFUSION) || potion.getType().equals(PotionEffectType.GLOWING))
+                if(badGoodPotionMap.containsKey(potion.getType()) || potion.getType().equals(PotionEffectType.NAUSEA) || potion.getType().equals(PotionEffectType.GLOWING))
                     event.setCancelled(true);
                 return;
             }

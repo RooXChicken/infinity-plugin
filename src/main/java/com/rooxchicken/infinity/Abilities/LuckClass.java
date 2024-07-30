@@ -371,7 +371,7 @@ public class LuckClass extends Ability
         if(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN) && Math.random() < 0.07)
         {
             event.setCancelled(true);
-            player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.4, 0.3, new Particle.DustOptions(Color.GREEN, 1.0f));
+            player.getWorld().spawnParticle(Particle.DUST, player.getLocation().clone().add(0,1,0), 50, 0.3, 0.4, 0.3, new Particle.DustOptions(Color.GREEN, 1.0f));
         }
     }
 
@@ -440,7 +440,7 @@ public class LuckClass extends Ability
                     double distance = Library.ClampD(player.getLocation().distance(e.getLocation()), 0, 2)*4;
                     e.setVelocity(e.getVelocity().multiply(Math.pow(2.0, -(8-distance))));
 
-                    //player.getWorld().spawnParticle(Particle.REDSTONE, e.getLocation(), 1, 0, 0, 0, new Particle.DustOptions(Color.WHITE, (float)(3-distance/4)));
+                    //player.getWorld().spawnParticle(Particle.DUST, e.getLocation(), 1, 0, 0, 0, new Particle.DustOptions(Color.WHITE, (float)(3-distance/4)));
                 }
             }
         }

@@ -329,7 +329,7 @@ public class StealthClass extends Ability
             if(Math.abs(difference) < 60)
             {
                 event.setDamage(event.getDamage() + 0.5);
-                entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 30, 0.3, 0.4, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
+                entity.getWorld().spawnParticle(Particle.DUST, entity.getLocation().clone().add(0,1,0), 30, 0.3, 0.4, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
                 //entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.6f);
             }
         }
@@ -417,7 +417,7 @@ public class StealthClass extends Ability
     //     if(data.get(ability3CooldownKey, PersistentDataType.INTEGER) <= 0)
     //     {
     //         event.setCancelled(true);
-    //         player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation(), 600, 10, 10, 10, new Particle.DustOptions(Color.RED, 0.8f));
+    //         player.getWorld().spawnParticle(Particle.DUST, player.getLocation(), 600, 10, 10, 10, new Particle.DustOptions(Color.RED, 0.8f));
 
     //         for(Object o : Library.getNearbyEntities(player.getLocation(), 20))
     //         {
@@ -491,13 +491,13 @@ public class StealthClass extends Ability
     //             event.setDamage(event.getDamage() * 1.2);
 
     //             entity.getWorld().playSound(entity.getLocation(), Sound.ENTITY_PLAYER_ATTACK_CRIT, 1.0f, 0.7f);
-    //             entity.getWorld().spawnParticle(Particle.REDSTONE, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.MAROON, 0.8f));
+    //             entity.getWorld().spawnParticle(Particle.DUST, entity.getLocation().clone().add(0,1,0), 100, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.MAROON, 0.8f));
 
     //             data.set(ability2CountKey, PersistentDataType.INTEGER, 0);
     //         }
     //         else
     //         {
-    //             player.getWorld().spawnParticle(Particle.REDSTONE, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.RED, 0.8f));
+    //             player.getWorld().spawnParticle(Particle.DUST, player.getLocation().clone().add(0,1,0), 10*crits, 0.5, 0.6, 0.5, new Particle.DustOptions(Color.RED, 0.8f));
     //             data.set(ability2CountKey, PersistentDataType.INTEGER, crits);
     //         }
     //     }
@@ -553,7 +553,7 @@ public class StealthClass extends Ability
     //             }
 
     //             victim.getWorld().playSound(victim.getLocation(), Sound.BLOCK_ANVIL_LAND, 0.4f, 1.0f);
-    //             victim.getWorld().spawnParticle(Particle.REDSTONE, victim.getLocation().clone().add(0,1,0), 100, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
+    //             victim.getWorld().spawnParticle(Particle.DUST, victim.getLocation().clone().add(0,1,0), 100, 0.3, 0.5, 0.3, new Particle.DustOptions(Color.GRAY, 1.0f));
     //         }
     //     }
     // }
