@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import com.rooxchicken.infinity.Infinity;
 import com.rooxchicken.infinity.Library;
@@ -22,7 +23,10 @@ public class SetPoints implements CommandExecutor
         if(!sender.isOp())
             return false;
 
-        Library.setPoints(Bukkit.getPlayer(sender.getName()), Integer.parseInt(args[0]));
+        Player player = Bukkit.getPlayer(sender.getName());
+        int amount = Integer.parseInt(args[0]);
+        
+        Library.setPoints(player, amount);
 
         return true;
     }

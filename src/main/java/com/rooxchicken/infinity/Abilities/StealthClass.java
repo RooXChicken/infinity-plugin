@@ -214,13 +214,21 @@ public class StealthClass extends Ability
         return null;
     }
 
+    public Node findNodeRaw(int clickIndex)
+    {
+        for(int i = 0; i < nodeList.size(); i++)
+        {
+            if(nodeList.get(i).clickIndex == clickIndex)
+                return nodeList.get(i);
+        }
+
+        return null;
+    }
+
     public void reset(Player player)
     {
-        PersistentDataContainer data = player.getPersistentDataContainer();
-        for(int i = 0; i < 10; i++)
-        {
-            data.set(new NamespacedKey(plugin, "stealth_" + i), PersistentDataType.BOOLEAN, false);
-        }
+        for(int i = 9; i >= 0; i--)
+            unlearnLogic(player, findNodeRaw(i));
     }
 
     // public void resetCooldown(Player player)

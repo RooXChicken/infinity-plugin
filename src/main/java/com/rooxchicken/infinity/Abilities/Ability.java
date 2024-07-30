@@ -46,16 +46,23 @@ public abstract class Ability implements Listener
 
         Library.sendPlayerData(player, "3_" + Library.getPoints(player) + "_" + resetZoom);
     }
-
+    
     public void unlearnNode(Player player, Node node)
+    {
+        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 0.6f, 1);
+        unlearnLogic(player, node);
+    }
+
+    public void unlearnLogic(Player player, Node node)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
 
+        if(data.has(node.key, PersistentDataType.BOOLEAN) && data.get(node.key, PersistentDataType.BOOLEAN))
+            Library.addPoint(player);
+
         node.aquired = false;
-        Library.addPoint(player);
         data.set(node.key, PersistentDataType.BOOLEAN, false);
 
-        player.playSound(player.getLocation(), Sound.BLOCK_BEACON_DEACTIVATE, 0.6f, 1);
         node.unlearn.accept(player);
     }
 }

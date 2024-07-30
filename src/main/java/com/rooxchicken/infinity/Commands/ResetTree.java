@@ -7,6 +7,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.rooxchicken.infinity.Infinity;
+import com.rooxchicken.infinity.Library;
 public class ResetTree implements CommandExecutor
 {
     private Infinity plugin;

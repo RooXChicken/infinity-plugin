@@ -16,6 +16,7 @@ import org.bukkit.Sound;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -43,7 +44,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerToggleFlightEvent;
 import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -89,11 +92,21 @@ public class Infinity extends JavaPlugin implements Listener
     public StealthClass stealth;
     public LuckClass luck;
 
+    public static ItemStack token;
+
     @Override
     public void onEnable()
     {
         tasks = new ArrayList<Task>();
         tasks.add(new TickPlayers(this));
+
+        token = new ItemStack(Material.STICK);
+        ItemMeta meta = token.getItemMeta();
+        meta.setDisplayName("§6Token");
+        meta.setCustomModelData(1);
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        token.setItemMeta(meta);
 
         hasMod = new ArrayList<Player>();
 

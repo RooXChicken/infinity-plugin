@@ -11,6 +11,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
@@ -42,41 +43,57 @@ public class Library
             player.sendMessage("infb63_" + data);
     }
 
-    public static void checkHasPoints(Player player)
-    {
-        PersistentDataContainer data = player.getPersistentDataContainer();
-        if(!data.has(Infinity.pointsKey, PersistentDataType.INTEGER))
-            data.set(Infinity.pointsKey, PersistentDataType.INTEGER, 1);
-    }
+    // public static void checkHasPoints(Player player)
+    // {
+    //     PersistentDataContainer data = player.getPersistentDataContainer();
+    // }
 
     public static int getPoints(Player player)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        checkHasPoints(player);
+        //checkHasPoints(player);
 
-        return data.get(Infinity.pointsKey, PersistentDataType.INTEGER);
+        int count = 0;
+        for(ItemStack item : player.getInventory().getContents())
+            if(item != null && item.hasItemMeta() && item.getItemMeta().equals(Infinity.token.getItemMeta()))
+                count += item.getAmount();
+
+        return count;
+        //return data.get(Infinity.pointsKey, PersistentDataType.INTEGER);
     }
 
     public static void subtractPoint(Player player)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        checkHasPoints(player);
+        //checkHasPoints(player);
 
-        data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) - 1);
+        for(ItemStack item : player.getInventory().getContents())
+            if(item != null && item.hasItemMeta() && item.getItemMeta().equals(Infinity.token.getItemMeta()))
+            {
+                item.setAmount(item.getAmount() - 1);
+                return;
+            }
+
+        //data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) - 1);
     }
 
     public static void addPoint(Player player)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        checkHasPoints(player);
+        //checkHasPoints(player);
 
-        data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) + 1);
+        player.getInventory().addItem(Infinity.token);
+
+        //data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) + 1);
     }
 
     public static void setPoints(Player player, int points)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        data.set(Infinity.pointsKey, PersistentDataType.INTEGER, points);
+
+        for(int i = 0; i < points; i++)
+            player.getInventory().addItem(Infinity.token);
+        //data.set(Infinity.pointsKey, PersistentDataType.INTEGER, points);
     }
     
     public static Entity getTarget(Player player, int range)
