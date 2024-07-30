@@ -223,6 +223,8 @@ public class HealthClass extends Ability
     public void addExtraAbsorption(PlayerItemConsumeEvent event)
     {
         Player player = event.getPlayer();
+        if(player.getHealth() > 8)
+            return;
         PersistentDataContainer data = player.getPersistentDataContainer();
 
         ItemStack item = event.getItem();
