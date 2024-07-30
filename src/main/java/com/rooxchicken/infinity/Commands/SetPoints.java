@@ -27,6 +27,8 @@ public class SetPoints implements CommandExecutor
         int amount = Integer.parseInt(args[0]);
         
         Library.setPoints(player, amount);
+        player.getInventory().addItem(Infinity.unlimiter);
+        player.getInventory().addItem(Infinity.extra);
 
         return true;
     }

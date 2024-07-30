@@ -43,15 +43,74 @@ public class Library
             player.sendMessage("infb63_" + data);
     }
 
-    // public static void checkHasPoints(Player player)
-    // {
-    //     PersistentDataContainer data = player.getPersistentDataContainer();
-    // }
+    public static void sendSkillTree(Player player)
+    {
+        sendPlayerData(player, "2_srt_Menu_0_1.0_1.0_1.0_false_3.0");
+        sendPlayerData(player, "2_menu/strength_-42_0_Strength Class_true_true_false_false_0");
+        sendPlayerData(player, "2_menu/speed_-21_0_Speed Class_true_true_false_false_1");
+        sendPlayerData(player, "2_menu/health_0_0_Health Class_true_true_false_false_2");
+        sendPlayerData(player, "2_menu/luck_21_0_Luck Class_true_true_false_false_3");
+        sendPlayerData(player, "2_menu/stealth_42_0_Stealth Class_true_true_false_false_4");
+        sendPlayerData(player, "3_" + Library.getPoints(player) + "_true");
+    }
+
+    public static int getPointMax(Player player)
+    {
+        int max = 6;
+        for(ItemStack item : player.getInventory().getContents())
+        {
+            if(item != null && item.hasItemMeta() && item.getItemMeta().equals(Infinity.unlimiter.getItemMeta()))
+                max += getKills(player);
+
+            if(item != null && item.hasItemMeta() && item.getItemMeta().equals(Infinity.extra.getItemMeta()))
+                max += item.getAmount();
+        }
+
+        return max;
+    }
+
+    public static void checkHasKills(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        if(!data.has(Infinity.killsKey, PersistentDataType.INTEGER))
+            data.set(Infinity.killsKey, PersistentDataType.INTEGER, 0);
+    }
+
+    public static void resetKills(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        checkHasKills(player);
+
+        data.set(Infinity.killsKey, PersistentDataType.INTEGER, 0);
+    }
+
+    public static void addKill(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        checkHasKills(player);
+
+        data.set(Infinity.killsKey, PersistentDataType.INTEGER, data.get(Infinity.killsKey, PersistentDataType.INTEGER) + 1);
+    }
+
+    public static int getKills(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        checkHasKills(player);
+
+        return data.get(Infinity.killsKey, PersistentDataType.INTEGER);
+    }
+
+    public static void checkHasPoints(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        if(!data.has(Infinity.pointsKey, PersistentDataType.INTEGER))
+            data.set(Infinity.pointsKey, PersistentDataType.INTEGER, 0);
+    }
 
     public static int getPoints(Player player)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        //checkHasPoints(player);
+        checkHasPoints(player);
 
         int count = 0;
         for(ItemStack item : player.getInventory().getContents())
@@ -65,7 +124,8 @@ public class Library
     public static void subtractPoint(Player player)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        //checkHasPoints(player);
+        checkHasPoints(player);
+        data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) + 1);
 
         for(ItemStack item : player.getInventory().getContents())
             if(item != null && item.hasItemMeta() && item.getItemMeta().equals(Infinity.token.getItemMeta()))
@@ -74,17 +134,25 @@ public class Library
                 return;
             }
 
-        //data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) - 1);
     }
 
     public static void addPoint(Player player)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
-        //checkHasPoints(player);
+        checkHasPoints(player);
+        data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) - 1);
 
         player.getInventory().addItem(Infinity.token);
 
-        //data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) + 1);
+    }
+
+    public static boolean canSpend(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        checkHasPoints(player);
+
+
+        return (data.get(Infinity.pointsKey, PersistentDataType.INTEGER) < getPointMax(player));
     }
 
     public static void setPoints(Player player, int points)

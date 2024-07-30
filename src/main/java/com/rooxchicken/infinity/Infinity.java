@@ -1,6 +1,7 @@
 package com.rooxchicken.infinity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -80,6 +81,8 @@ public class Infinity extends JavaPlugin implements Listener
 {
     public static NamespacedKey skillTreeKey;
     public static NamespacedKey pointsKey;
+    public static NamespacedKey killsKey;
+    public static NamespacedKey nodeActionKey;
 
     public static ArrayList<Task> tasks;
     public ArrayList<Player> hasMod;
@@ -93,6 +96,9 @@ public class Infinity extends JavaPlugin implements Listener
     public LuckClass luck;
 
     public static ItemStack token;
+    public static ItemStack unlimiter;
+    public static ItemStack extra;
+    public NodeAction nodeAction;
 
     @Override
     public void onEnable()
@@ -100,18 +106,45 @@ public class Infinity extends JavaPlugin implements Listener
         tasks = new ArrayList<Task>();
         tasks.add(new TickPlayers(this));
 
-        token = new ItemStack(Material.STICK);
-        ItemMeta meta = token.getItemMeta();
+        token = new ItemStack(Material.PAPER);
+        {ItemMeta meta = token.getItemMeta();
         meta.setDisplayName("§6Token");
         meta.setCustomModelData(1);
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        token.setItemMeta(meta);
+        ArrayList<String> lore = new ArrayList<String>();
+        lore.add("§6Right click or run /skilltree to use this!");
+        meta.setLore(lore);
+        token.setItemMeta(meta);}
+
+        extra = new ItemStack(Material.PAPER);
+        {ItemMeta meta = extra.getItemMeta();
+        meta.setDisplayName("§7Extra");
+        meta.setCustomModelData(3);
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        ArrayList<String> lore = new ArrayList<String>();
+        lore.add("§7Allows you to spend one extra point! (per extra)");
+        meta.setLore(lore);
+        extra.setItemMeta(meta);}
+
+        unlimiter = new ItemStack(Material.PAPER);
+        {ItemMeta meta = unlimiter.getItemMeta();
+        meta.setDisplayName("§4Unlimiter");
+        meta.setCustomModelData(2);
+        meta.addEnchant(Enchantment.UNBREAKING, 1, true);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        ArrayList<String> lore = new ArrayList<String>();
+        lore.add("§4Every kill allows you to spend one more point total");
+        meta.setLore(lore);
+        unlimiter.setItemMeta(meta);}
 
         hasMod = new ArrayList<Player>();
 
         skillTreeKey = new NamespacedKey(this, "skillTree");
         pointsKey = new NamespacedKey(this, "points");
+        killsKey = new NamespacedKey(this, "kills");
+        nodeActionKey = new NamespacedKey(this, "nodeAction");
 
         getServer().getPluginManager().registerEvents(this, this);
         
@@ -136,7 +169,8 @@ public class Infinity extends JavaPlugin implements Listener
         this.getCommand("hdn_verifymod").setExecutor(new VerifyMod(this));
 		blockedCommands.add("hdn_verifymod");
 
-        this.getCommand("hdn_action").setExecutor(new NodeAction(this));
+        nodeAction = new NodeAction(this);
+        this.getCommand("hdn_action").setExecutor(nodeAction);
 		blockedCommands.add("hdn_action");
         
         this.getCommand("skilltree").setExecutor(new SkillTree(this));
@@ -177,6 +211,59 @@ public class Infinity extends JavaPlugin implements Listener
         }, 0, 1);
 
         getLogger().info("Infinity (limited to 1987) (made by roo)");
+    }
+
+    @EventHandler
+    public void useToken(PlayerInteractEvent event)
+    {
+        if(!event.getAction().equals(Action.RIGHT_CLICK_AIR) && !event.getAction().equals(Action.RIGHT_CLICK_BLOCK))
+            return;
+
+        Player player = event.getPlayer();
+        ItemStack item = event.getItem();
+
+        if(item != null && item.hasItemMeta() && item.getItemMeta().equals(token.getItemMeta()))
+        {
+            Library.sendSkillTree(player);
+        }
+    }
+
+    @EventHandler
+    public void dropRecentNode(PlayerDeathEvent event)
+    {
+        Player player = event.getEntity();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        Library.resetKills(player);
+
+        if(player.getKiller() != null)
+        {
+            Player killer = player.getKiller();
+            for(ItemStack item : killer.getInventory().getContents())
+            {
+                if(item != null && item.hasItemMeta() && item.getItemMeta().equals(unlimiter.getItemMeta()))
+                {
+                    Library.addKill(killer);
+                    
+                    if(Library.getKills(killer) > 5)
+                        player.ban("§4§lERROR: Infinity = 0!", (Date)null, null);
+                }
+            }
+        }
+
+        if(!data.has(nodeActionKey, PersistentDataType.STRING))
+            return;
+
+        String action = data.get(nodeActionKey, PersistentDataType.STRING);
+        if(action.equals(""))
+            return;
+
+        String[] args = action.split("_");
+        
+        nodeAction.unlearnRaw(player, Integer.parseInt(args[0]), Integer.parseInt(args[1]));
+        player.getWorld().dropItemNaturally(player.getLocation(), token);
+
+        data.set(nodeActionKey, PersistentDataType.STRING, "");
     }
 
     @EventHandler
