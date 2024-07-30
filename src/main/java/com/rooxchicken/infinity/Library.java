@@ -45,6 +45,11 @@ public class Library
 
     public static void sendSkillTree(Player player)
     {
+        if(!Infinity.hasMod.contains(player))
+        {
+            player.sendMessage("§4Please install the Infinity mod!");
+            return;
+        }
         sendPlayerData(player, "2_srt_Menu_0_1.0_1.0_1.0_false_3.0");
         sendPlayerData(player, "2_menu/strength_-42_0_Strength Class_true_true_false_false_0");
         sendPlayerData(player, "2_menu/speed_-21_0_Speed Class_true_true_false_false_1");

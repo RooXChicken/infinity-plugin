@@ -28,6 +28,11 @@ public abstract class Ability implements Listener
 
     public void sendNodes(Player player, boolean resetZoom)
     {
+        if(!Infinity.hasMod.contains(player))
+        {
+            player.sendMessage("§4Please install the Infinity mod!");
+            return;
+        }
         if(playerNodeMap.containsKey(player))
             playerNodeMap.remove(player);
         

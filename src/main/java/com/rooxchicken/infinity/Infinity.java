@@ -85,7 +85,7 @@ public class Infinity extends JavaPlugin implements Listener
     public static NamespacedKey nodeActionKey;
 
     public static ArrayList<Task> tasks;
-    public ArrayList<Player> hasMod;
+    public static ArrayList<Player> hasMod;
 
     private List<String> blockedCommands = new ArrayList<>();
 
