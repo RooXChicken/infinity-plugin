@@ -113,7 +113,8 @@ public class Infinity extends JavaPlugin implements Listener
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add("§6Right click or run /skilltree to use this!");
+        lore.add("§6Allows you to gain a skill in the skill tree!");
+        lore.add("§6Right click or use /skilltree to use");
         meta.setLore(lore);
         token.setItemMeta(meta);}
 
@@ -124,7 +125,9 @@ public class Infinity extends JavaPlugin implements Listener
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add("§7Allows you to spend one extra point! (per extra)");
+        lore.add("§7For each Extra in your inventory,");
+        lore.add("§7you can spend 1 extra point in the Skill Tree!");
+        lore.add("§7Must be kept in your inventory");
         meta.setLore(lore);
         extra.setItemMeta(meta);}
 
@@ -135,7 +138,9 @@ public class Infinity extends JavaPlugin implements Listener
         meta.addEnchant(Enchantment.UNBREAKING, 1, true);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         ArrayList<String> lore = new ArrayList<String>();
-        lore.add("§4Every kill allows you to spend one more point total");
+        lore.add("§4For each kill you get with this item in your inventory,");
+        lore.add("§4you can spend 1 extra point in the Skill Tree");
+        lore.add("§4Kills: 0");
         meta.setLore(lore);
         unlimiter.setItemMeta(meta);}
 
@@ -234,7 +239,7 @@ public class Infinity extends JavaPlugin implements Listener
         Player player = event.getEntity();
         PersistentDataContainer data = player.getPersistentDataContainer();
 
-        Library.resetKills(player);
+        Library.resetKills(player, event.getDrops());
 
         if(player.getKiller() != null)
         {
@@ -243,7 +248,7 @@ public class Infinity extends JavaPlugin implements Listener
             {
                 if(item != null && item.hasItemMeta() && item.getItemMeta().equals(unlimiter.getItemMeta()))
                 {
-                    Library.addKill(killer);
+                    killer.getInventory().setItem(killer.getInventory().first(item), Library.addKill(killer, item).clone());
                     
                     if(Library.getKills(killer) > 5)
                         player.ban("§4§lERROR: Infinity = 0!", (Date)null, null);

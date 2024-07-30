@@ -283,9 +283,9 @@ public class StealthClass extends Ability
         }
 
         if(data.has(node0AbilityKey, PersistentDataType.BOOLEAN) && data.get(node0AbilityKey, PersistentDataType.BOOLEAN))
-            Library.sendGlobalData("1_" + player.getName() + "_1");
+            Library.sendGlobalData("1_" + player.getName().replace("_", "~") + "_1");
         else
-            Library.sendGlobalData("1_" + player.getName() + "_0");
+            Library.sendGlobalData("1_" + player.getName().replace("_", "~") + "_0");
 
         return bar;
     }

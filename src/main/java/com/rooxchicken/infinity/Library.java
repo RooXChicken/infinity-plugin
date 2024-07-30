@@ -1,6 +1,7 @@
 package com.rooxchicken.infinity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -11,7 +12,9 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.util.RayTraceResult;
@@ -40,7 +43,8 @@ public class Library
     public static void sendGlobalData(String data)
     {
         for(Player player : Bukkit.getOnlinePlayers())
-            player.sendMessage("infb63_" + data);
+            if(Infinity.hasMod.contains(player))
+                player.sendMessage("infb63_" + data);
     }
 
     public static void sendSkillTree(Player player)
@@ -81,20 +85,51 @@ public class Library
             data.set(Infinity.killsKey, PersistentDataType.INTEGER, 0);
     }
 
-    public static void resetKills(Player player)
+    public static void resetKills(Player player, List<ItemStack> inv)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
         checkHasKills(player);
+
+        for(ItemStack item : inv)
+        {
+            if(item != null && item.hasItemMeta() && item.getItemMeta().equals(Infinity.unlimiter.getItemMeta()))
+            {
+                ItemMeta meta = item.getItemMeta();
+                ArrayList<String> lore = new ArrayList<String>();
+                for(String l : meta.getLore())
+                    lore.add(l);
+
+                lore.remove(2);
+                
+                lore.add("§4Kills: 0");
+                meta.setLore(lore);
+                item.setItemMeta(meta);
+            }
+        }
 
         data.set(Infinity.killsKey, PersistentDataType.INTEGER, 0);
     }
 
-    public static void addKill(Player player)
+    public static ItemStack addKill(Player player, ItemStack _item)
     {
         PersistentDataContainer data = player.getPersistentDataContainer();
         checkHasKills(player);
 
+        ItemStack item = _item.clone();
+
+        ItemMeta meta = item.getItemMeta();
+        ArrayList<String> lore = new ArrayList<String>();
+        for(String l : meta.getLore())
+            lore.add(l);
+
+        lore.remove(2);
+        
         data.set(Infinity.killsKey, PersistentDataType.INTEGER, data.get(Infinity.killsKey, PersistentDataType.INTEGER) + 1);
+        lore.add("§4Kills: " + data.get(Infinity.killsKey, PersistentDataType.INTEGER));
+        meta.setLore(lore);
+        item.setItemMeta(meta);
+
+        return item;
     }
 
     public static int getKills(Player player)
