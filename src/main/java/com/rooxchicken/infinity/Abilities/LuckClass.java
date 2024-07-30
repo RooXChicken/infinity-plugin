@@ -202,6 +202,15 @@ public class LuckClass extends Ability
         return null;
     }
 
+    public void reset(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        for(int i = 0; i < 10; i++)
+        {
+            data.set(new NamespacedKey(plugin, "luck_" + i), PersistentDataType.BOOLEAN, false);
+        }
+    }
+
     public void resetCooldown(Player player)
     {
         player.getPersistentDataContainer().set(ability7CooldownKey, PersistentDataType.INTEGER, 0);

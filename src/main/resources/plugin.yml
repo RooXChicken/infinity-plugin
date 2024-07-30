@@ -47,5 +47,9 @@ commands:
    resetcooldown:
       description: Resets all cooldowns
       usage: /resetcooldown
+
+   resettree:
+      description: Resets all tree data
+      usage: /resettree
       
 depend: [ ProtocolLib ]

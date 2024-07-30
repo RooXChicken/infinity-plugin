@@ -50,6 +50,7 @@ public class SpeedClass extends Ability
     public SpeedClass(Infinity _plugin)
     {
         super(_plugin);
+        plugin = _plugin;
         
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
         nodeList = new ArrayList<Node>();
@@ -133,6 +134,15 @@ public class SpeedClass extends Ability
         }
 
         return null;
+    }
+
+    public void reset(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        for(int i = 0; i < 10; i++)
+        {
+            data.set(new NamespacedKey(plugin, "speed_" + i), PersistentDataType.BOOLEAN, false);
+        }
     }
 
     public void resetCooldown(Player player)

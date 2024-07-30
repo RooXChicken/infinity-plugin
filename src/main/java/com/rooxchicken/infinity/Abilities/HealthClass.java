@@ -164,6 +164,15 @@ public class HealthClass extends Ability
         return null;
     }
 
+    public void reset(Player player)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+        for(int i = 0; i < 10; i++)
+        {
+            data.set(new NamespacedKey(plugin, "health_" + i), PersistentDataType.BOOLEAN, false);
+        }
+    }
+
     @EventHandler
     private void doublePotionLength(EntityPotionEffectEvent event)
     {

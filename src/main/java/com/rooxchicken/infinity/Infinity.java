@@ -64,6 +64,7 @@ import com.rooxchicken.infinity.Abilities.StealthClass;
 import com.rooxchicken.infinity.Abilities.StrengthClass;
 import com.rooxchicken.infinity.Commands.FirstAbility;
 import com.rooxchicken.infinity.Commands.ResetCooldown;
+import com.rooxchicken.infinity.Commands.ResetTree;
 import com.rooxchicken.infinity.Commands.SecondAbility;
 import com.rooxchicken.infinity.Commands.SetPoints;
 import com.rooxchicken.infinity.Commands.SkillTree;
@@ -128,6 +129,7 @@ public class Infinity extends JavaPlugin implements Listener
         this.getCommand("skilltree").setExecutor(new SkillTree(this));
         this.getCommand("setpoints").setExecutor(new SetPoints(this));
         this.getCommand("resetcooldown").setExecutor(new ResetCooldown(this));
+        this.getCommand("resettree").setExecutor(new ResetTree(this));
 
         strength = new StrengthClass(this);
         speed = new SpeedClass(this);
