@@ -66,6 +66,7 @@ import com.rooxchicken.infinity.Abilities.LuckClass;
 import com.rooxchicken.infinity.Abilities.SpeedClass;
 import com.rooxchicken.infinity.Abilities.StealthClass;
 import com.rooxchicken.infinity.Abilities.StrengthClass;
+import com.rooxchicken.infinity.Commands.AddAllPoints;
 import com.rooxchicken.infinity.Commands.FirstAbility;
 import com.rooxchicken.infinity.Commands.ResetCooldown;
 import com.rooxchicken.infinity.Commands.ResetTree;
@@ -182,6 +183,7 @@ public class Infinity extends JavaPlugin implements Listener
         this.getCommand("setpoints").setExecutor(new SetPoints(this));
         this.getCommand("resetcooldown").setExecutor(new ResetCooldown(this));
         this.getCommand("resettree").setExecutor(new ResetTree(this));
+        this.getCommand("addallpoints").setExecutor(new AddAllPoints(this));
 
         strength = new StrengthClass(this);
         speed = new SpeedClass(this);
@@ -265,8 +267,8 @@ public class Infinity extends JavaPlugin implements Listener
 
         String[] args = action.split("_");
         
-        nodeAction.unlearnRaw(player, Integer.parseInt(args[0]), Integer.parseInt(args[1]));
-        player.getWorld().dropItemNaturally(player.getLocation(), token);
+        if(nodeAction.unlearnRaw(player, Integer.parseInt(args[0]), Integer.parseInt(args[1])))
+            player.getWorld().dropItemNaturally(player.getLocation(), token);
 
         data.set(nodeActionKey, PersistentDataType.STRING, "");
     }

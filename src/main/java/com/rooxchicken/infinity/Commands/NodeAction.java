@@ -92,30 +92,27 @@ public class NodeAction implements CommandExecutor
         }
     }
 
-    public void unlearnRaw(Player player, int menu, int node)
+    public boolean unlearnRaw(Player player, int menu, int node)
     {
         //player.getPersistentDataContainer().set(Infinity.nodeActionKey, PersistentDataType.STRING, menu + "_" + node + "_" + action);
         switch(menu)
         {
             case 1:
-                plugin.strength.unlearnNode(player, plugin.strength.findNodeRaw(node));
-            break;
+                return plugin.strength.tryUnlearn(player, plugin.strength.findNodeRaw(node));
 
             case 2:
-                plugin.speed.unlearnNode(player, plugin.speed.findNodeRaw(node));
-            break;
+                return plugin.speed.tryUnlearn(player, plugin.speed.findNodeRaw(node));
 
             case 4:
-                plugin.luck.unlearnNode(player, plugin.luck.findNodeRaw(node));
-            break;
+                return plugin.luck.tryUnlearn(player, plugin.luck.findNodeRaw(node));
 
             case 5:
-                plugin.stealth.unlearnNode(player, plugin.stealth.findNodeRaw(node));
-            break;
+                return plugin.stealth.tryUnlearn(player, plugin.stealth.findNodeRaw(node));
             case 6:
-                plugin.health.unlearnNode(player, plugin.health.findNodeRaw(node));
-            break;
+                return plugin.health.tryUnlearn(player, plugin.health.findNodeRaw(node));
         }
+
+        return false;
     }
 
 }

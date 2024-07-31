@@ -51,5 +51,9 @@ commands:
    resettree:
       description: Resets all tree data
       usage: /resettree
+
+   addallpoints:
+      description: Gives every player points
+      usage: /addallpoints <number>
       
 depend: [ ProtocolLib ]

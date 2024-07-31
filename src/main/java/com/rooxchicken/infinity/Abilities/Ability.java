@@ -70,4 +70,17 @@ public abstract class Ability implements Listener
 
         node.unlearn.accept(player);
     }
+
+    public boolean tryUnlearn(Player player, Node node)
+    {
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        boolean aquired = node.aquired;
+        node.aquired = false;
+        data.set(node.key, PersistentDataType.BOOLEAN, false);
+
+        node.unlearn.accept(player);
+
+        return aquired;
+    }
 }

@@ -182,7 +182,10 @@ public class Library
         checkHasPoints(player);
         data.set(Infinity.pointsKey, PersistentDataType.INTEGER, data.get(Infinity.pointsKey, PersistentDataType.INTEGER) - 1);
 
-        player.getInventory().addItem(Infinity.token);
+        if(player.getInventory().firstEmpty() != -1)
+            player.getInventory().addItem(Infinity.token);
+        else
+            player.getWorld().dropItemNaturally(player.getLocation(), Infinity.token);
 
     }
 

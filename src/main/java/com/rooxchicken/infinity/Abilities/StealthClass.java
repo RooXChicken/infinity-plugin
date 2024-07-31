@@ -27,6 +27,7 @@ import org.bukkit.entity.Warden;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockReceiveGameEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
@@ -308,6 +309,21 @@ public class StealthClass extends Ability
     }
 
     @EventHandler
+    public void preventFootsteps(BlockReceiveGameEvent event)
+    {
+        if(!(event.getEntity() instanceof Player))
+            return;
+
+        Player player = (Player)event.getEntity();
+        PersistentDataContainer data = player.getPersistentDataContainer();
+
+        if(data.has(node0AbilityKey, PersistentDataType.BOOLEAN) && data.get(node0AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
     public void giveGlowingArrows(EntityDamageByEntityEvent event)
     {
         if(!(event.getEntity() instanceof LivingEntity && event.getDamager() instanceof Projectile))
@@ -315,6 +331,9 @@ public class StealthClass extends Ability
 
         LivingEntity entity = (LivingEntity)event.getEntity();
         Projectile damager = (Projectile)event.getDamager();
+
+        if(!(damager.getShooter() instanceof Player))
+            return;
 
         Player player = (Player)damager.getShooter();
         PersistentDataContainer data = player.getPersistentDataContainer();

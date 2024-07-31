@@ -76,7 +76,6 @@ public class HealthClass extends Ability
     private Infinity plugin;
     public int type = -1;
 
-    private HashMap<Player, PotionEffect> playerEffectMap;
     private HashMap<PotionEffectType, PotionEffectType> badGoodPotionMap;
 
     private NamespacedKey node0AbilityKey;
@@ -98,7 +97,6 @@ public class HealthClass extends Ability
         plugin = _plugin;
         
         playerNodeMap = new HashMap<Player, ArrayList<Node>>();
-        playerEffectMap = new HashMap<Player, PotionEffect>();
         badGoodPotionMap = new HashMap<PotionEffectType, PotionEffectType>();
         nodeList = new ArrayList<Node>();
 
@@ -250,8 +248,6 @@ public class HealthClass extends Ability
         if((data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN)) || data.has(node4AbilityKey, PersistentDataType.BOOLEAN) && data.get(node4AbilityKey, PersistentDataType.BOOLEAN))
         {
             PotionEffect potion = event.getNewEffect();
-            if(!playerEffectMap.containsKey(player))
-                playerEffectMap.put(player, potion);
 
             if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN))
             {
@@ -262,34 +258,10 @@ public class HealthClass extends Ability
 
             if(!badGoodPotionMap.containsKey(potion.getType()))
                 return;
-            
-            if(comparePotionEffects(playerEffectMap.get(player), potion))
-            {
-                playerEffectMap.remove(player);
-                playerEffectMap.put(player, potion);
-                return;
-            }
-
-            playerEffectMap.remove(player);
-            playerEffectMap.put(player, potion);
 
             player.addPotionEffect(new PotionEffect(badGoodPotionMap.get(potion.getType()), potion.getDuration(), potion.getAmplifier()));
             event.setCancelled(true);
         }
-    }
-
-    private boolean comparePotionEffects(PotionEffect potion1, PotionEffect potion2)
-    {
-        PotionEffectType type1 = potion1.getType();
-        PotionEffectType type2 = potion2.getType();
-
-        int amplifier1 = potion1.getAmplifier();
-        int amplifier2 = potion2.getAmplifier();
-
-        int duration1 = potion1.getDuration();
-        int duration2 = potion2.getDuration();
-
-        return (type1.equals(type2) && amplifier1 == amplifier2 && duration1 == duration2);
     }
 
     @EventHandler
