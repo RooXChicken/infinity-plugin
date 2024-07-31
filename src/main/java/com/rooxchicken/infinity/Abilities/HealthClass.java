@@ -195,6 +195,18 @@ public class HealthClass extends Ability
         String bar = "";
         PersistentDataContainer data = player.getPersistentDataContainer();
 
+        if(data.has(node4AbilityKey, PersistentDataType.BOOLEAN) && data.get(node4AbilityKey, PersistentDataType.BOOLEAN))
+        {
+            for(PotionEffect potion : player.getActivePotionEffects())
+            {
+                if(!badGoodPotionMap.containsKey(potion.getType()))
+                    continue;
+
+                player.removePotionEffect(potion.getType());
+                player.addPotionEffect(new PotionEffect(badGoodPotionMap.get(potion.getType()), potion.getDuration(), potion.getAmplifier()));
+            }
+        }
+
         //if(data.has(node7AbilityKey, PersistentDataType.BOOLEAN) && data.get(node7AbilityKey, PersistentDataType.BOOLEAN))
         
 
@@ -245,7 +257,7 @@ public class HealthClass extends Ability
         Player player = (Player)event.getEntity();
         PersistentDataContainer data = player.getPersistentDataContainer();
 
-        if((data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN)) || data.has(node4AbilityKey, PersistentDataType.BOOLEAN) && data.get(node4AbilityKey, PersistentDataType.BOOLEAN))
+        if(data.has(node3AbilityKey, PersistentDataType.BOOLEAN) && data.get(node3AbilityKey, PersistentDataType.BOOLEAN))
         {
             PotionEffect potion = event.getNewEffect();
 
@@ -255,12 +267,6 @@ public class HealthClass extends Ability
                     event.setCancelled(true);
                 return;
             }
-
-            if(!badGoodPotionMap.containsKey(potion.getType()))
-                return;
-
-            player.addPotionEffect(new PotionEffect(badGoodPotionMap.get(potion.getType()), potion.getDuration(), potion.getAmplifier()));
-            event.setCancelled(true);
         }
     }
 
