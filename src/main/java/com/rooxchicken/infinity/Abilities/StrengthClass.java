@@ -212,18 +212,17 @@ public class StrengthClass extends Ability
             Player track = playerTrackMap.get(player);
             ItemStack compass = plugin.strength.playerCompassMap.get(player);
             CompassMeta meta = (CompassMeta)compass.getItemMeta();
-            meta.setLodestone(track.getLocation());
+            if(meta != null)
+                meta.setLodestone(track.getLocation());
 
-            if(cooldown <= 0)
+            if(cooldown <= 0 || !(data.has(node8AbilityKey, PersistentDataType.BOOLEAN) && data.get(node8AbilityKey, PersistentDataType.BOOLEAN)) || player.getInventory().first(compass) == -1)
             {
-                meta.setDisplayName("§rCompass");
-                meta.setLodestone(null);
+                meta = (CompassMeta)(new ItemStack(Material.COMPASS).getItemMeta());
                 playerTrackMap.remove(player);
                 playerCompassMap.remove(player);
             }
 
             compass.setItemMeta(meta);
-
 
             data.set(ability8TimerKey, PersistentDataType.INTEGER, cooldown);
         }

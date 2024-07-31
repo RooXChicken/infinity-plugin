@@ -225,7 +225,7 @@ public class HealthClass extends Ability
         if(data.has(node1AbilityKey, PersistentDataType.BOOLEAN) && data.get(node1AbilityKey, PersistentDataType.BOOLEAN))
         {
             if(data.has(plugin.strength.node0AbilityKey, PersistentDataType.BOOLEAN) && data.get(plugin.strength.node0AbilityKey, PersistentDataType.BOOLEAN))
-                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 0));
+                player.addPotionEffect(new PotionEffect(PotionEffectType.REGENERATION, 20, 1));
         }
     }
 

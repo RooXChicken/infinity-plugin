@@ -75,6 +75,7 @@ import com.rooxchicken.infinity.Commands.SetPoints;
 import com.rooxchicken.infinity.Commands.SkillTree;
 import com.rooxchicken.infinity.Commands.NodeAction;
 import com.rooxchicken.infinity.Commands.VerifyMod;
+import com.rooxchicken.infinity.Tasks.RemoveCompass;
 import com.rooxchicken.infinity.Tasks.Task;
 import com.rooxchicken.infinity.Tasks.TickPlayers;
 
@@ -106,6 +107,7 @@ public class Infinity extends JavaPlugin implements Listener
     {
         tasks = new ArrayList<Task>();
         tasks.add(new TickPlayers(this));
+        tasks.add(new RemoveCompass(this));
 
         token = new ItemStack(Material.PAPER);
         {ItemMeta meta = token.getItemMeta();
